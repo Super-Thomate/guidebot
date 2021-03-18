@@ -61,6 +61,74 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     }
   } else
   
+  if (action === "addvalue") {
+    if (!key) return message.reply("Please specify a key to add value to.");
+    if (!defaults[key]) return message.reply("This key does not exist in the settings");
+    if (!overrides[key]) return message.reply("This key does not have an override and is using defaults.");
+    if (! Array.isArray (overrides[key])) return message.reply("This key does not have multiple values.");
+    let oldArray = client.settings.get(message.guild.id) [key] ;
+    const joinedValue = value.join(" ");
+    oldArray.push (joinedValue) ;
+    client.settings.set(message.guild.id, oldArray, key) ;
+    //console.log (client.settings.get(message.guild.id) [key]) ;
+    message.reply (`${joinedValue} successfully added to ${key}`) ;
+  } else
+  
+  if (action === "delvalue") {
+    if (!key) return message.reply("Please specify a key to delete value to.");
+    if (!defaults[key]) return message.reply("This key does not exist in the settings");
+    if (!overrides[key]) return message.reply("This key does not have an override and is using defaults.");
+    if (! Array.isArray (overrides[key])) return message.reply("This key does not have multiple values.");
+    let oldArray = client.settings.get(message.guild.id) [key] ;
+    const joinedValue = value.join(" ");
+    oldArray.removeItem (joinedValue) ;
+    client.settings.set(message.guild.id, oldArray, key) ;
+    // console.log (client.settings.get(message.guild.id) [key]) ;
+    message.reply (`${joinedValue} successfully deleted from ${key}`) ;
+  } else
+  
+  if (action === "rate") {
+    if (!key) return message.reply("Please specify a rate to edit.");
+    //if (!defaults[key]) return message.reply("This rate does not exist in the settings");
+    //if (!overrides[key]) return message.reply("This rate does not have an override and is using defaults.");
+    const joinedValue = value.join(" ");
+    if (Number.isNaN (joinedValue)) return message.reply (`Value ${joinedValue} for rate is not a number.`) ;
+    let oldValue = null ;
+    if (    (key === "common")
+         || (key === "uncommon")
+         || (key === "rare")
+         || (key === "epic")
+       ) {
+      let itemRate = client.settings.get(message.guild.id) ["itemRate"] ;
+      itemRate [key] = joinedValue ;
+      client.settings.set(message.guild.id, itemRate, "itemRate") ;
+      let total = 0 ;
+      for (let key in itemRate) {
+        total+= Number.parseInt (itemRate [key]);
+      }
+      if (total !== 100) message.reply (`The total value for itemRate is ${total}%, it may produce unexpected result !`) ;
+    } else
+    if (    (key === "high")
+         || (key === "regular")
+         || (key === "low")
+         || (key === "event")
+       ) {
+      let characterRate = client.settings.get(message.guild.id) ["characterRate"] ;
+      characterRate [key] = joinedValue ;
+      client.settings.set(message.guild.id, characterRate, "characterRate") ;
+      let total = 0 ;
+      for (let key in characterRate) {
+        total+= Number.parseInt (characterRate [key]);
+      }
+      if (total !== 100) message.reply (`The total value for characterRate is ${total}%, it may produce unexpected result !`) ;
+    } else {
+      return message.reply(`${key} is not a valid value.`) ;
+    }
+    // client.settings.set(message.guild.id, oldArray, key) ;
+    // console.log (client.settings.get(message.guild.id) [key]) ;
+    message.reply (`${key} successfully set to ${joinedValue}`) ;
+  } else
+  
   if (action === "get") {
     if (!key) return message.reply("Please specify a key to view");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
@@ -70,6 +138,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     // Otherwise, the default action is to return the whole configuration;
     const array = [];
     Object.entries(settings).forEach(([key, value]) => {
+      if (typeof value === "object" && !Array.isArray (value)) value = JSON.stringify(value);
       array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`); 
     });
     await message.channel.send(`= Current Guild Settings =\n${array.join("\n")}`, {code: "asciidoc"});
@@ -87,5 +156,5 @@ exports.help = {
   name: "set",
   category: "System",
   description: "View or change settings for your server.",
-  usage: "set <view/get/edit> <key> <value>"
+  usage: "set <view/get/edit/addvalue/delvalue/rate> <key> <value>"
 };

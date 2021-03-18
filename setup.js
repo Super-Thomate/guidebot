@@ -5,14 +5,22 @@ const fs = require("fs");
 let baseConfig = fs.readFileSync("./config_base.txt", "utf8");
 
 const defaultSettings = {
-  "prefix": "~",
+  "prefix": "/",
   "modLogChannel": "mod-log",
   "modRole": "Moderator",
   "adminRole": "Administrator",
   "systemNotice": "true",
   "welcomeChannel": "welcome",
   "welcomeMessage": "Say hello to {{user}}, everyone! We all need a warm welcome sometimes :D",
-  "welcomeEnabled": "false"
+  "welcomeEnabled": "false",
+  // Everything for Minigame
+   "occuranceDrop": 10.0, // Drop rate of a character after a message
+   "toggleCommandTrigger": "false", // Toggle for whether or not a bot command will trigger the drop
+   "dropChannel": "library", // The channel where the bot will drop a character
+   "claimTime": 10000, // Time in ms to claim an item after character drop
+   "characterRate": {"high":25.0, "regular":25.0, "low":25.0, "event":25.0}, // Character drop rate
+   "itemRate": {"common":25.0, "uncommon":25.0, "rare":25.0, "epic":25.0}, // Item drop rate
+   "commandClaim": ["foo","bar"] // Command word to claim
 };
 
 const settings = new Enmap({
@@ -64,6 +72,26 @@ let prompts = [
       { "name": "Guild Members (privileged)", "value": "GUILD_MEMBERS" },
     ]
   },
+  {
+    type: "input",
+    name: "host",
+    message: "Please enter the host for your database."
+  },
+  {
+    type: "input",
+    name: "user",
+    message: "Please enter the user for your database."
+  },
+  {
+    type: "input",
+    name: "password",
+    message: "Please enter the password for your database."
+  },
+  {
+    type: "input",
+    name: "database",
+    message: "Please enter the name for your database."
+  },
 ];
 
 (async function() {
@@ -85,7 +113,12 @@ let prompts = [
   baseConfig = baseConfig
     .replace("{{ownerID}}", answers.ownerID)
     .replace("{{token}}", `"${answers.token}"`)
-    .replace("{{intents}}", JSON.stringify(answers.intents));
+    .replace("{{intents}}", JSON.stringify(answers.intents))
+    .replace("{{host}}", `"${answers.host}"`)
+    .replace("{{user}}", `"${answers.user}"`)
+    .replace("{{password}}", `"${answers.password}"`)
+    .replace("{{database}}", `"${answers.database}"`)
+    ;
 
   fs.writeFileSync("./config.js", baseConfig);
   console.log("REMEMBER TO NEVER SHARE YOUR TOKEN WITH ANYONE!");

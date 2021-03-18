@@ -16,7 +16,27 @@ module.exports = async (client, message) => {
   if (message.content.match(prefixMention)) {
     return message.reply(`My prefix on this guild is \`${settings.prefix}\``);
   }
-
+  
+  // Here we will handle the trigger for character spawn
+  // Toggle config => a command trigger or not the character spawn
+  if ((settings.toggleCommandTrigger == "true") || (message.content.indexOf(settings.prefix) !== 0)) {
+   const drop = Math.floor(Math.random() * 100) + 1;
+   if (drop <= settings.occuranceDrop) {
+     console.log ("Drop the charater") ;
+     try {
+       const dropChannel = await message.guild.channels.cache.find(c => c.name === settings.dropChannel) ;
+       if (typeof(dropChannel) === 'undefined' || dropChannel === null) {
+         console.error ("dropChannel is not defined") ;
+         return ;
+       }
+       // await dropChannel.send ("Drop ici") ;
+       await client.dropCharacter (dropChannel, settings) ;
+     } catch (err) {
+       console.error (err) ;
+     }
+   }
+  };
+  
   // Also good practice to ignore any message that does not start with our prefix,
   // which is set in the configuration file.
   if (message.content.indexOf(settings.prefix) !== 0) return;
@@ -37,7 +57,7 @@ module.exports = async (client, message) => {
   // Check whether the command, or alias, exist in the collections defined
   // in app.js.
   const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
-  // using this const varName = thing OR otherThing; is a pretty efficient
+  // using this const varName = thing OR  otherThing; is a pretty efficient
   // and clean way to grab one of 2 values!
   if (!cmd) return;
 

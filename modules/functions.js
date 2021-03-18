@@ -38,14 +38,22 @@ module.exports = (client) => {
   // And then they're stuck because the default settings are also gone.
   // So if you do that, you're resetting your defaults. Congrats.
   const defaultSettings = {
-    "prefix": "~",
+    "prefix": "/",
     "modLogChannel": "mod-log",
     "modRole": "Moderator",
     "adminRole": "Administrator",
     "systemNotice": "true",
     "welcomeChannel": "welcome",
     "welcomeMessage": "Say hello to {{user}}, everyone! We all need a warm welcome sometimes :D",
-    "welcomeEnabled": "false"
+    "welcomeEnabled": "false",
+    // Everything for Minigame
+    "occuranceDrop": 10.0, // Drop rate of a character after a message
+    "toggleCommandTrigger": "false", // Toggle for whether or not a bot command will trigger the drop
+    "dropChannel": "library", // The channel where the bot will drop a character
+    "claimTime": 10000, // Time in ms to claim an item after character drop
+    "characterRate": {"high":25.0, "regular":25.0, "low":25.0, "event":25.0}, // Character drop rate depending on rarity
+    "itemRate": {"common":25.0, "uncommon":25.0, "rare":25.0, "epic":25.0}, // Item drop rate depending on rarity
+    "commandClaim": ["foo", "bar"] // Command word to claim
   };
 
   // getSettings merges the client defaults with the guild settings. guild settings in
@@ -159,6 +167,18 @@ module.exports = (client) => {
       return this.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
     }
   });
+  
+  Object.defineProperty(String.prototype, "upperCaseFirstLetter", {
+    value: function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+    }
+  });
+  
+  Object.defineProperty(String.prototype, "lowerCaseFirstLetter", {
+    value: function() {
+      return this.charAt(0).toLowerCase() + this.slice(1);
+    }
+  });
 
   // <Array>.random() returns a single random element from an array
   // [1, 2, 3, 4, 5].random() can return 1, 2, 3, 4 or 5.
@@ -167,6 +187,27 @@ module.exports = (client) => {
       return this[Math.floor(Math.random() * this.length)];
     }
   });
+  
+  Array.prototype.removeItem = function (item) {
+    var indexOf = this.indexOf(item) ;
+    if (indexOf === -1) return this ;
+    var rest = this.slice((indexOf || indexOf) + 1 || this.length);
+    this.length = indexOf < 0 ? this.length + indexOf : indexOf;
+    return this.push.apply(this, rest) ;
+  };
+  
+  Array.prototype.removeAllItem = function (item) {
+    var indexOf = this.indexOf(item) ;
+    if (indexOf === -1) return this ;
+    while (indexOf != -1) {
+      var rest = this.slice((indexOf || indexOf) + 1 || this.length);
+      this.length = indexOf < 0 ? this.length + indexOf : indexOf;
+      this.push.apply(this, rest)
+      indexOf = this.indexOf(item) ;
+      console.log (indexOf) ;
+    }
+    return this.length ;
+  };
 
   // `await client.wait(1000);` to "pause" for 1 second.
   client.wait = require("util").promisify(setTimeout);
@@ -185,4 +226,98 @@ module.exports = (client) => {
     client.logger.error(`Unhandled rejection: ${err}`);
     console.error(err);
   });
+  
+  // GAME
+  client.getRandomRarity = (rarityRate) => {
+    let currentScore = 0 ;
+    let number = Math.floor(Math.random() * 100) + 1;
+    for (let key in rarityRate) {
+      currentScore+=rarityRate [key];
+      if (number <= currentScore)
+       return key ;
+    }
+    return -1 ;
+  } ;
+  
+  client.getRandomRarityInt = (rarityRate) => {
+    let currentScore = 0 ;
+    let number = Math.floor(Math.random() * 100) + 1;
+    let i = 0 ;
+    for (let key in rarityRate) {
+      currentScore+=rarityRate [key];
+      i++ ;
+      if (number <= currentScore) return i ;
+    }
+    return -1 ;
+  } ;
+  
+  client.getRarityCharacter = (rarity) => {
+    return ["Haut","Régulier","Bas","Événementiel"] [rarity-1] ;
+  } ;
+  client.getRarityItem = (rarity) => {
+    return ["Commun","Non commun","Rare","Épique"] [rarity-1] ;
+  } ;
+  
+  client.getRarityEmoji = (rarity) => {
+    return ["<:common:578905506022948874>", "<:uncommon:578905506165293076>", "<:rare:578905506706358282>", "<:epic:578905506693775360>"] [rarity-1] ;
+  }
+  
+  const colors = {
+   "base": "#DDA624",
+   1: "#CFCFCD", // common
+   2: "#9AEE3F", // uncommon
+   3:  "#2794CD", // rare
+   4: "#9F59DD", // epic
+   "left": "#B20C20"
+  } ;
+  
+  client.dropCharacter = async (channel, setting) => {
+    const commandClaim = setting.commandClaim.random() ;
+    const character = client.getRandomRarityInt (setting.characterRate) ;
+    const item = client.getRandomRarityInt (setting.itemRate) ;
+    const guild_id = channel.guild.id ;
+    const filter = m => m.content.toLowerCase().startsWith (`${setting.prefix}${commandClaim.toLowerCase()}`) ;
+    if (character === -1 || item === -1) return channel.send ("An error occured ! Check your rate.") ;
+    var [rows,fields] =
+      await client
+              .connection
+              .promise ()
+              .execute (   "select    A.`id` as characterId \n"+
+                           "        , A.`name` as characterName \n"+
+                           "        , A.`image`as characterImage \n"+
+                           "        , B.`id` as itemId \n"+
+                           "        , B.`name` as itemName \n"+
+                           "        , B.`rarity` as itemRarity \n"+
+                           " from `wanshitong`.`character` as A, `wanshitong`.`item` as B \n"+
+                           "where A.`rarity` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.guild_id=? AND A.`is_available`=1 ;"
+                         , [character, item, guild_id]
+                       ) ;
+    const row = rows.random() ; //get one among all the possibilities
+    var characterEmbed = new client.Discord.MessageEmbed()
+                             .setColor(colors.base)
+                             .setTitle(`${row.characterName} s'approche et semble vouloir te donner quelque chose.`)
+                             .setDescription(`Pour recevoir son objet utilise la commande ${setting.prefix}${commandClaim}`)
+                             .setImage(row.characterImage)
+                             ;
+    const msg = await channel.send (characterEmbed) ;
+    let already = false ;
+    try {
+      const collected = await channel.awaitMessages (filter, {max:1, time: setting.claimTime, errors: ["time"]}) ;
+      // Add to inventory
+      const author = collected.first().author ;
+      [rows,fields] = await client.connection.promise().query ("select count (*) as already from wanshitong.inventory where owner_id=? and item_id=? and guild_id=?;", [author.id, row.itemId, guild_id]) ;
+      already = rows[0].already ;
+      if (! already) {
+        await client.connection.promise().execute ("insert into wanshitong.inventory (owner_id, item_id, guild_id) values (?, ?, ?) ;", [author.id, row.itemId, guild_id]) ;
+      }
+      characterEmbed.setDescription (`<@${collected.first().author.id}> ${row.characterName} t'offre ${row.itemName}. C'est un objet ${client.getRarityItem(item).lowerCaseFirstLetter()} ${client.getRarityEmoji(item)}. ${already?"Vous lui rendez parce que vous l'avez déjà.":""}`).setColor (colors[item]) ;
+      msg.edit (characterEmbed) ;
+      collected.first().delete({timeout:500});
+    } catch (err) {
+      console.log ("err:", err) ;
+      characterEmbed.setDescription (`Oh non, ${row.characterName} est parti.`).setColor (colors.left) ;
+      msg.edit (characterEmbed) ;
+    }
+  } ;
+  
 };

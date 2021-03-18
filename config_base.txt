@@ -17,6 +17,9 @@ const config = {
   // For more info about intents see the README.
   intents: {{intents}},
 
+  // MySQL information required to connect to a database
+  mysqlConnection: {"host":{{host}}, "user":{{user}}, "password":{{password}}, "database":{{database}}, "supportBigNumbers":true},
+
   // PERMISSION LEVEL DEFINITIONS.
   permLevels: [
     // This is the lowest permisison level, this is for non-roled users.

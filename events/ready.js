@@ -15,4 +15,40 @@ module.exports = async client => {
 
   // Make the bot "play the game" which is the help command with default prefix.
   client.user.setActivity(`${client.settings.get("default").prefix}help`, {type: "PLAYING"});
+  
+  // DATABASE
+  /*
+  -- character
+  CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0,`guild_id` BIGINT NOT NULL, primary key (`id`)) ;
+  -- item
+  CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`id`)) ;
+  -- inventory
+  CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;
+  */
+  /*
+  client.connection.execute ("drop table `character` ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  */
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, `guild_id` BIGINT NOT NULL, primary key (`id`)) ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  /*
+  client.connection.execute ("drop table `item` ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  */
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`id`)) ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  /*
+  client.connection.execute ("drop table `inventory` ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  */
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  
+  
 };
