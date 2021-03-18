@@ -276,7 +276,8 @@ module.exports = (client) => {
     const character = client.getRandomRarityInt (setting.characterRate) ;
     const item = client.getRandomRarityInt (setting.itemRate) ;
     const guild_id = channel.guild.id ;
-    const filter = m => m.content.toLowerCase().startsWith (`${setting.prefix}`) ;
+    const prefix = setting.prefix || defaultSettings.prefix ;
+    const filter = m => m.content.toLowerCase().startsWith (`${prefix}`) ;
     if (character === -1 || item === -1) return channel.send ("An error occured ! Check your rate.") ;
     var [rows,fields] =
       await client
@@ -296,7 +297,7 @@ module.exports = (client) => {
     var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor(colors.base)
                              .setTitle(`${row.characterName} s'approche.`)
-                             .setDescription(`${row.characterName} souhaite vous offrir quelque chose.\nTapez \`${setting.prefix}${commandClaim}\` pour le récupérer.`)
+                             .setDescription(`${row.characterName} souhaite vous offrir quelque chose.\nTapez \`${prefix}${commandClaim}\` pour le récupérer.`)
                              .setImage(row.characterImage)
                              ;
     const msg = await channel.send (characterEmbed) ;
@@ -304,7 +305,7 @@ module.exports = (client) => {
     const collector = channel.createMessageCollector(filter,  {max:1, time: setting.claimTime, errors: ["time"]});
 
     collector.on('collect', async (collected) => {
-      if (collected.content.toLowerCase() !== `${setting.prefix}${commandClaim.toLowerCase()}`) {
+      if (collected.content.toLowerCase() !== `${prefix}${commandClaim.toLowerCase()}`) {
         return collector.stop ("wrong answer") ;
       }
       // Add to inventory
@@ -336,17 +337,6 @@ module.exports = (client) => {
           .then(msg => console.log(`Deleted message ${msg.content}`))
           .catch(console.error);
     });
-    
-    /*
-    try {
-      const collected = await channel.awaitMessages (filter, {max:1, time: setting.claimTime, errors: ["time"]}) ;
-      await collected.first().delete({timeout:500});
-    } catch (err) {
-      console.log ("err:", err) ;
-      characterEmbed.setDescription (`Oh non, ${row.characterName} est parti.`).setColor (colors.left) ;
-      msg.edit (characterEmbed) ;
-    }
-    */
   } ;
   
 };
