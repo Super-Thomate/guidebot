@@ -1,5 +1,5 @@
 exports.run = async (client, message, [key, ...args], level) => { // eslint-disable-line no-unused-vars
-  /*
+  /**/
   if (!client.settings.has(message.guild.id)) client.settings.set(message.guild.id, {});
   const keys = [
     "occuranceDrop",
@@ -15,7 +15,7 @@ exports.run = async (client, message, [key, ...args], level) => { // eslint-disa
   keys.forEach((key) => {
     if (! overrides[key]) client.settings.set(message.guild.id, defaults[key], key);
   }) ;
-  */
+  /**/
   if (key === "allItems") {
     const guild_id = message.guild.id, owner_id = message.author.id ;
     var [rows, fields] = await client.connection.promise().query ("select id as characterId from wanshitong.`character` where guild_id=? and is_available=1;", [guild_id]) ;
