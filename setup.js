@@ -18,8 +18,8 @@ const defaultSettings = {
    "toggleCommandTrigger": "false", // Toggle for whether or not a bot command will trigger the drop
    "dropChannel": "library", // The channel where the bot will drop a character
    "claimTime": 10000, // Time in ms to claim an item after character drop
-   "characterRate": {"high":25.0, "regular":25.0, "low":25.0, "event":25.0}, // Character drop rate
-   "itemRate": {"common":25.0, "uncommon":25.0, "rare":25.0, "epic":25.0}, // Item drop rate
+   "characterRate": {"high":45.0, "regular":40.0, "low":15.0, "event":0.0}, // Character drop rate
+   "itemRate": {"common":50.0, "uncommon":30.0, "rare":15.0, "epic":5.0}, // Item drop rate
    "commandClaim": ["foo","bar"] // Command word to claim
 };
 
