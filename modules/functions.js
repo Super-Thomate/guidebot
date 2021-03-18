@@ -304,7 +304,7 @@ module.exports = (client) => {
     const collector = channel.createMessageCollector(filter,  {max:1, time: setting.claimTime, errors: ["time"]});
 
     collector.on('collect', async (collected) => {
-      if (collected.content !== `${setting.prefix}${commandClaim.toLowerCase()}`) {
+      if (collected.content.toLowerCase() !== `${setting.prefix}${commandClaim.toLowerCase()}`) {
         return collector.stop ("wrong answer") ;
       }
       // Add to inventory
