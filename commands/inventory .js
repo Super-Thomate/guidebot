@@ -11,7 +11,7 @@ exports.run = async (client, message, args, level) => { // eslint-disable-line n
   //console.log (rows) ;
   var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor("#DDA624")
-                             .setTitle("Inventaire")
+                             .setTitle(`📜 Inventaire de ${message.member.displayName}`)
                              .setFooter (`1/${numPage}`)
                              ;
   var currentPage = 1 ;

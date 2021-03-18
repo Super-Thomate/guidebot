@@ -10,7 +10,7 @@ exports.run = async (client, message, args, level) => {
                              .setTitle(`Scoreboard ${message.guild.name}`)
                              .setFooter (`1/${numPage}`)
                              ;
-  const descHeader = ` Rank.    | Items | User \n` ;
+  const descHeader = `  Rank.  | Items | User \n` ;
   var maxLength = descHeader.length ;
   var [rows, fields] = await client.connection.promise().query ("select count(*) as total from wanshitong.`character` where guild_id=? and is_available=1;", [guild.id]) ;
   const totItem = rows [0].total * 4 ;
@@ -77,7 +77,7 @@ async function getBody (client, guild, totItem, maxLength, message, page, maxPer
     let items = `${row.items}` ;
     let complete = row.items>=totItem ;
     let rankStr = `${complete?"🏵️":""}${ranking}.` ;
-    let newLine = ` ${" ".repeat (8-rankStr.length)}${rankStr} | ${" ".repeat (5-items.length)}${items} | ${row.owner_id === message.author.id ? "Vous => ":""}${guildMember.displayName} (${guildMember.user.tag})\n` ;
+    let newLine = ` ${" ".repeat (7-rankStr.length)}${rankStr} | ${" ".repeat (5-items.length)}${items} | ${row.owner_id === message.author.id ? "Vous => ":""}${guildMember.displayName} (${guildMember.user.tag})\n` ;
     maxLength = Math.max(maxLength, newLine.length) ;
     description += newLine ;
   }) ;

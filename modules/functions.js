@@ -276,7 +276,7 @@ module.exports = (client) => {
     const character = client.getRandomRarityInt (setting.characterRate) ;
     const item = client.getRandomRarityInt (setting.itemRate) ;
     const guild_id = channel.guild.id ;
-    const filter = m => m.content.toLowerCase().startsWith (`${setting.prefix}${commandClaim.toLowerCase()}`) ;
+    const filter = m => m.content.toLowerCase().startsWith (`${setting.prefix}`) ;
     if (character === -1 || item === -1) return channel.send ("An error occured ! Check your rate.") ;
     var [rows,fields] =
       await client
@@ -295,29 +295,58 @@ module.exports = (client) => {
     const row = rows.random() ; //get one among all the possibilities
     var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor(colors.base)
-                             .setTitle(`${row.characterName} s'approche et semble vouloir te donner quelque chose.`)
-                             .setDescription(`Pour recevoir son objet utilise la commande ${setting.prefix}${commandClaim}`)
+                             .setTitle(`${row.characterName} s'approche.`)
+                             .setDescription(`${row.characterName} souhaite vous offrir quelque chose.\nTapez \`${setting.prefix}${commandClaim}\` pour le récupérer.`)
                              .setImage(row.characterImage)
                              ;
     const msg = await channel.send (characterEmbed) ;
     let already = false ;
-    try {
-      const collected = await channel.awaitMessages (filter, {max:1, time: setting.claimTime, errors: ["time"]}) ;
+    const collector = channel.createMessageCollector(filter,  {max:1, time: setting.claimTime, errors: ["time"]});
+
+    collector.on('collect', async (collected) => {
+      if (collected.content !== `${setting.prefix}${commandClaim.toLowerCase()}`) {
+        return collector.stop ("wrong answer") ;
+      }
       // Add to inventory
-      const author = collected.first().author ;
+      const author = collected.author ;
       [rows,fields] = await client.connection.promise().query ("select count (*) as already from wanshitong.inventory where owner_id=? and item_id=? and guild_id=?;", [author.id, row.itemId, guild_id]) ;
       already = rows[0].already ;
       if (! already) {
         await client.connection.promise().execute ("insert into wanshitong.inventory (owner_id, item_id, guild_id) values (?, ?, ?) ;", [author.id, row.itemId, guild_id]) ;
       }
-      characterEmbed.setDescription (`<@${collected.first().author.id}> ${row.characterName} t'offre ${row.itemName}. C'est un objet ${client.getRarityItem(item).lowerCaseFirstLetter()} ${client.getRarityEmoji(item)}. ${already?"Vous lui rendez parce que vous l'avez déjà.":""}`).setColor (colors[item]) ;
+      characterEmbed
+        .setTitle (`${row.characterName} repart.`)
+        .setDescription (`<@${author.id}> ${row.characterName} t'a offert ${row.itemName}.\n${client.getRarityEmoji(item)} C'est un objet **${client.getRarityItem(item).lowerCaseFirstLetter()}** ${client.getRarityEmoji(item)}. ${already?"\n*Vous lui rendez parce que vous l'avez déjà.*":""}`)
+        .setColor (colors[item]) ;
       msg.edit (characterEmbed) ;
-      collected.first().delete({timeout:500});
+      collector.stop ("claimed") ;
+    });
+    
+    collector.on('end', (collected, reason) => {
+      let msgCollected = collected.first() ;
+      if ((reason === "time") || (reason === "wrong answer")) {
+        characterEmbed
+          .setTitle (`${row.characterName} disparaît.`) // est parti·e
+          .setDescription (`${(reason === "time")?"Oh non, vous n'avez pas été assez rapide !":"Ce n'était pas la réponde attendue !"}`)
+          .setColor (colors.left) ;
+        msg.edit (characterEmbed) ;
+      }
+      if ((reason !== "time"))
+        msgCollected.delete({timeout:500})
+          .then(msg => console.log(`Deleted message ${msg.content}`))
+          .catch(console.error);
+    });
+    
+    /*
+    try {
+      const collected = await channel.awaitMessages (filter, {max:1, time: setting.claimTime, errors: ["time"]}) ;
+      await collected.first().delete({timeout:500});
     } catch (err) {
       console.log ("err:", err) ;
       characterEmbed.setDescription (`Oh non, ${row.characterName} est parti.`).setColor (colors.left) ;
       msg.edit (characterEmbed) ;
     }
+    */
   } ;
   
 };
