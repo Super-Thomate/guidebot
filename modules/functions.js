@@ -327,7 +327,7 @@ module.exports = (client) => {
       if ((reason === "time") || (reason === "wrong answer")) {
         characterEmbed
           .setTitle (`${row.characterName} disparaît.`) // est parti·e
-          .setDescription (`${(reason === "time")?"Oh non, vous n'avez pas été assez rapide !":"Ce n'était pas la réponde attendue !"}`)
+          .setDescription (`${(reason === "time")?"Oh non, vous n'avez pas été assez rapide !":"Ce n'était pas la réponse attendue !"}`)
           .setColor (colors.left) ;
         msg.edit (characterEmbed) ;
       }
