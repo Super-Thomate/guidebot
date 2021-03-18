@@ -48,7 +48,8 @@ exports.run = async (client, message, args, level) => {
     });
     return ;
   }
-  
+  characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}`+"```") ;
+  await message.channel.send(characterEmbed);
 };
 
 exports.conf = {
