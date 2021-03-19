@@ -6,7 +6,7 @@ const config = require("./config.js");
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection(config.mysqlConnection);
-
+/*
 connection.execute ("TRUNCATE TABLE `wanshitong`.`character` ;", (err, rows) => {
   console.log ("err:",err) ;
   // console.log ("rows:", rows) ;
@@ -15,6 +15,7 @@ connection.execute ("TRUNCATE TABLE `wanshitong`.`item` ;", (err, rows) => {
   console.log ("err:",err) ;
   // console.log ("rows:", rows) ;
 }) ;
+*/
 // 494812563016777729
 /*
 -- character
