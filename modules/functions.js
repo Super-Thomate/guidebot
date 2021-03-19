@@ -336,6 +336,9 @@ module.exports = (client) => {
         msgCollected.delete({timeout:500})
           .then(msg => console.log(`Deleted message ${msg.content}`))
           .catch(console.error);
+      if (typeof client.alreadyDropped [channel.guild.id] !== "undefined" && client.alreadyDropped [channel.guild.id] !== null) {
+        client.alreadyDropped [channel.guild.id] = null ;
+      }
     });
   } ;
   

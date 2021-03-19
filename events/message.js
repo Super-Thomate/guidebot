@@ -22,6 +22,10 @@ module.exports = async (client, message) => {
   if ((settings.toggleCommandTrigger == "true") || (message.content.indexOf(settings.prefix) !== 0)) {
    const drop = Math.floor(Math.random() * 100) + 1;
    if (drop <= settings.occuranceDrop) {
+     if (typeof client.alreadyDropped [message.guild.id] !== "undefined" && client.alreadyDropped [message.guild.id] !== null) {
+       return console.log ("Already a drop !") ;
+     }
+     client.alreadyDropped [message.guild.id] = Date.now() ;
      console.log ("Drop the charater") ;
      try {
        const dropChannel = await message.guild.channels.cache.find(c => c.name === settings.dropChannel) ;

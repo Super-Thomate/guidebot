@@ -52,6 +52,8 @@ client.connection = mysql.createConnection(client.config.mysqlConnection);
 
 client.Discord = Discord ; // maybe
 
+client.alreadyDropped = {} ;
+
 // We're doing real fancy node 8 async/await stuff here, and to do that
 // we need to wrap stuff in an anonymous function. It's annoying but it works.
 
