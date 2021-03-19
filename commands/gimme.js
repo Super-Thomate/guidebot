@@ -28,7 +28,7 @@ exports.run = async (client, message, [key, ...args], level) => { // eslint-disa
           })
         })
       }) ;
-      message.reply (`all items given to ${message.member.displayName} ;`) ;
+      message.reply (`all items given to ${message.member.displayName}.`) ;
     } catch (err) {
       console.log ("err gimme allItems:", err) ;
       message.reply ("an error occured !") ;

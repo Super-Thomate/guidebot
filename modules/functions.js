@@ -277,7 +277,14 @@ module.exports = (client) => {
     const item = client.getRandomRarityInt (setting.itemRate) ;
     const guild_id = channel.guild.id ;
     const prefix = setting.prefix || defaultSettings.prefix ;
-    const filter = m => m.content.toLowerCase().startsWith (`${prefix}`) ;
+    const filter = async (m) => {
+      return (    m.content.startsWith (`${prefix}`)
+               && isCommandClaim (m.content.toLowerCase(), setting.commandClaim)
+               && ! await isBlackList (m.member, client)
+             ) ;
+      
+    } ;
+    
     if (character === -1 || item === -1) return channel.send ("An error occured ! Check your rate.") ;
     var [rows,fields] =
       await client
@@ -341,5 +348,20 @@ module.exports = (client) => {
       }
     });
   } ;
+  
+  
+  function isCommandClaim (content, commandClaim) {
+    let isIt = false ;
+    commandClaim.forEach (c => {
+      if (content.slice(1) === c.toLowerCase())
+        isIt = true ;
+    }) ;
+    return isIt ;
+  }
+  async function isBlackList (member, client) {
+    const [rows, fields] = await client.connection.promise().query ("select count(*) as ban from wanshitong.blacklist where owner_id=? and guild_id=?", [member.id, member.guild.id]) ;
+    return (rows[0].ban != 0) ;
+  }
+  
   
 };
