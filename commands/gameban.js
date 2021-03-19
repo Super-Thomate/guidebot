@@ -54,7 +54,7 @@ exports.run = async (client, message, [key, ...user], level) => { // eslint-disa
 exports.conf = {
   enabled: true,
   guildOnly: true,
-  aliases: ["gb", "gameboy", "ptdr"],
+  aliases: ["gb", "gameboy", "ptdr", "blacklist"],
   permLevel: "Moderator"
 };
 
