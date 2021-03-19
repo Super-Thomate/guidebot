@@ -31,12 +31,14 @@ module.exports = async (client, message) => {
        const dropChannel = await message.guild.channels.cache.find(c => c.name === settings.dropChannel) ;
        if (typeof(dropChannel) === 'undefined' || dropChannel === null) {
          console.error ("dropChannel is not defined") ;
+         client.alreadyDropped [message.guild.id] = null ;
          return ;
        }
        // await dropChannel.send ("Drop ici") ;
        await client.dropCharacter (dropChannel, settings) ;
      } catch (err) {
        console.error (err) ;
+       client.alreadyDropped [message.guild.id] = null ;
      }
    }
   };
