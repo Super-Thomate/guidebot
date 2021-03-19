@@ -14,7 +14,8 @@ module.exports = async client => {
   }, 60000);
 
   // Make the bot "play the game" which is the help command with default prefix.
-  client.user.setActivity(`${client.settings.get("default").prefix}help`, {type: "PLAYING"});
+  // client.user.setActivity(`${client.settings.get("default").prefix}help`, {type: "PLAYING"});
+  client.user.setActivity(`Collecting items`, {type: "PLAYING"});
   
   // DATABASE
   /*
