@@ -48,7 +48,11 @@ client.aliases = new Enmap();
 client.settings = new Enmap({name: "settings"});
 
 // establishing an MySQL connection
-client.connection = mysql.createConnection(client.config.mysqlConnection);
+client.connection = mysql.createPool (client.config.mysqlConnection);
+client.connection.on ('error', err => {
+  console.error ("error on sql connection:", err) ;
+  if (err) throw err ;
+}) ;
 
 client.Discord = Discord ; // maybe
 
