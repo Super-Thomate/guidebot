@@ -50,11 +50,11 @@ module.exports = async client => {
   client.connection.execute ("CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
-  /**/
+  /*
   client.connection.execute ("drop table `blacklist` ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
-  /**/
+  */
   client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`user_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
