@@ -37,9 +37,13 @@ exports.run = async (client, message, [action, value], level) => { // eslint-dis
   } else
   if (action === "message" || action === "m") {
     try {
-      const [rows, fields] = await client.connection.promise().query ("select message, drop from wanshitong.`occurance` where guild_id=? ;", [message.guild.id]) ;
-      const row = rows [0] ;
-      message.channel.send (`= Percentage =\n${row.message} message with ${row.drop} character.`, {code: "asciidoc"}) ;
+      const [rows, fields] = await client.connection.promise().query ("select message, `drop` from wanshitong.`occurance` where guild_id=? ;", [message.guild.id]) ;
+      if (rows.length) {
+        const row = rows [0] ;
+        message.channel.send (`= Percentage =\n${row.message} message with ${row.drop} character => ${row.drop/row.message * 100}%.`, {code: "asciidoc"}) ;
+      } else {
+        message.channel.send (`= Percentage =\nEmpty.`, {code: "asciidoc"}) ;
+      }
     } catch (err) {
       console.error ("", err) ;
       message.reply ("error on pop message.") ;
