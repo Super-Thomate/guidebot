@@ -21,10 +21,7 @@ module.exports = async (client, message) => {
   // Toggle config => a command trigger or not the character spawn
   if ((settings.toggleCommandTrigger == "true") || (message.content.indexOf(settings.prefix) !== 0)) {
    const drop = Math.floor(Math.random() * 100) + 1;
-   if (drop <= settings.occuranceDrop) {
-     if (typeof client.alreadyDropped [message.guild.id] !== "undefined" && client.alreadyDropped [message.guild.id] !== null) {
-       return console.log ("Already a drop !") ;
-     }
+   if ((drop <= settings.occuranceDrop) && (typeof client.alreadyDropped [message.guild.id] === "undefined" || client.alreadyDropped [message.guild.id] === null)) {
      client.alreadyDropped [message.guild.id] = Date.now() ;
      console.log ("Drop the charater") ;
      try {
