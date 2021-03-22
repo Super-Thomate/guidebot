@@ -21,9 +21,11 @@ module.exports = async (client, message) => {
   // Toggle config => a command trigger or not the character spawn
   if ((settings.toggleCommandTrigger == "true") || (message.content.indexOf(settings.prefix) !== 0)) {
    const drop = Math.floor(Math.random() * 100) + 1;
+   client.connection.execute ("insert into wanshitong.`occurance` (guild_id) values (?) on duplicate key update message=message+1 ;", [message.guild.id], (err, res) => {console.error ("occurrance message:", err)}) ;
    if ((drop <= settings.occuranceDrop) && (typeof client.alreadyDropped [message.guild.id] === "undefined" || client.alreadyDropped [message.guild.id] === null)) {
      client.alreadyDropped [message.guild.id] = Date.now() ;
      console.log ("Drop the charater") ;
+     client.connection.execute ("update wanshitong.`occurance` set drop=drop+1 where guild_id=? ;", [message.guild.id], (err, res) => {console.error ("occurrance drop:", err)}) ;
      try {
        const dropChannel = await message.guild.channels.cache.find(c => c.name === settings.dropChannel) ;
        if (typeof(dropChannel) === 'undefined' || dropChannel === null) {

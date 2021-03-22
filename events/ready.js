@@ -25,6 +25,8 @@ module.exports = async client => {
   CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`id`)) ;
   -- inventory
   CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;
+  -- leaderboard
+  CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL, `complete` SMALLINT NOT NULL DEFAULT 0, `date_compelted` DATETIME NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;
   */
   /*
   client.connection.execute ("drop table `character` ;", (err, rows) => {
@@ -58,12 +60,16 @@ module.exports = async client => {
   client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`user_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
-  /*
+  /**/
   client.connection.execute ("drop table `gamelb` ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
-  */
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL, `complete` SMALLINT NOT NULL DEFAULT 0, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
+  /**/
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL, `complete` SMALLINT NOT NULL DEFAULT 0, `date_compelted` DATETIME NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  // Table for debug occurance
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `occurance` (`message` BIGINT NOT NULL default 0, `drop` BIGINT NOT NULL default 0, `guild_id` BIGINT NOT NULL, primary key (`guild_id`)) ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
   
