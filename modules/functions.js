@@ -307,10 +307,17 @@ module.exports = (client) => {
                              .setDescription(`${row.characterName} souhaite vous offrir quelque chose.\nTapez \`${prefix}${commandClaim}\` pour le récupérer.`)
                              .setImage(row.characterImage)
                              ;
-    const msg = await channel.send (characterEmbed) ;
+    const msgEmbed = await channel.send (characterEmbed) ;
     let already = false ;
     const collector = channel.createMessageCollector(filter,  {max:1, time: setting.claimTime, errors: ["time"]});
-
+    const handleDelete = (msg) => {
+      if (msg.id === msgEmbed.id) {
+        console.log ("Something deleted the character") ;
+        collector.stop ("erased") ;
+      }
+      client.off ("messageDelete", handleDelete) ;
+    } ;
+    client.on ("messageDelete", handleDelete) ;
     collector.on('collect', async (collected) => {
       if (collected.content.toLowerCase() !== `${prefix}${commandClaim.toLowerCase()}`) {
         return collector.stop ("wrong answer") ;
@@ -326,18 +333,25 @@ module.exports = (client) => {
         .setTitle (`${row.characterName} repart.`)
         .setDescription (`<@${author.id}> ${row.characterName} t'a offert ${row.itemName}.\n${client.getRarityEmoji(item)} C'est un objet **${client.getRarityItem(item).lowerCaseFirstLetter()}** ${client.getRarityEmoji(item)}. ${already?"\n*Vous lui rendez parce que vous l'avez déjà.*":""}`)
         .setColor (colors[item]) ;
-      msg.edit (characterEmbed) ;
+      msgEmbed.edit (characterEmbed) ;
       collector.stop ("claimed") ;
     });
     
     collector.on('end', (collected, reason) => {
+      if (reason == "erased") {
+        client.off ("messageDelete", handleDelete) ;
+        if (typeof client.alreadyDropped [channel.guild.id] !== "undefined" && client.alreadyDropped [channel.guild.id] !== null) {
+          client.alreadyDropped [channel.guild.id] = null ;
+        }
+        return ;
+      }
       let msgCollected = collected.first() ;
       if ((reason === "time") || (reason === "wrong answer")) {
         characterEmbed
           .setTitle (`${row.characterName} disparaît.`) // est parti·e
           .setDescription (`${(reason === "time")?"Oh non, vous n'avez pas été assez rapide !":"Ce n'était pas la réponse attendue !"}`)
           .setColor (colors.left) ;
-        msg.edit (characterEmbed) ;
+        msgEmbed.edit (characterEmbed) ;
       }
       if ((reason !== "time"))
         msgCollected.delete({timeout:500})
@@ -346,6 +360,7 @@ module.exports = (client) => {
       if (typeof client.alreadyDropped [channel.guild.id] !== "undefined" && client.alreadyDropped [channel.guild.id] !== null) {
         client.alreadyDropped [channel.guild.id] = null ;
       }
+      client.off ("messageDelete", handleDelete) ;
     });
   } ;
   
@@ -359,9 +374,8 @@ module.exports = (client) => {
     return isIt ;
   }
   async function isBlackList (member, client) {
-    const [rows, fields] = await client.connection.promise().query ("select count(*) as ban from wanshitong.blacklist where owner_id=? and guild_id=?", [member.id, member.guild.id]) ;
+    const [rows, fields] = await client.connection.promise().query ("select count(*) as ban from wanshitong.blacklist where user_id=? and guild_id=?", [member.id, member.guild.id]) ;
     return (rows[0].ban != 0) ;
   }
-  
   
 };

@@ -8,7 +8,7 @@ exports.run = async (client, message, [key, ...user], level) => { // eslint-disa
   }
   if (key === "ban" || key === "tki") {
     try {
-      const [rows,fields] = await client.connection.promise().execute ("insert into wanshitong.blacklist (owner_id, guild_id) values (?, ?) on duplicate key update guild_id=guild_id;", [member.id, message.guild.id]) ;
+      const [rows,fields] = await client.connection.promise().execute ("insert into wanshitong.blacklist (user_id, guild_id) values (?, ?) on duplicate key update guild_id=guild_id;", [member.id, message.guild.id]) ;
       message.reply (`${member.displayName} (${member.user.tag}) is now banned from the game !`) ;
     } catch (err) {
       console.log ("err ban:", err) ;
@@ -17,7 +17,7 @@ exports.run = async (client, message, [key, ...user], level) => { // eslint-disa
   } else 
   if (key === "unban") {
     try {
-      const [rows,fields] = await client.connection.promise().execute ("delete from wanshitong.blacklist where owner_id=? and guild_id=? ;", [member.id, message.guild.id]) ;
+      const [rows,fields] = await client.connection.promise().execute ("delete from wanshitong.blacklist where user_id=? and guild_id=? ;", [member.id, message.guild.id]) ;
       message.reply (`${member.displayName} (${member.user.tag}) is now unbanned from the game !`)
     } catch (err) {
       console.log ("err unban:", err) ;
@@ -26,7 +26,7 @@ exports.run = async (client, message, [key, ...user], level) => { // eslint-disa
   } else 
   if (key === "status") {
     try {
-      const [rows,fields] = await client.connection.promise().execute ("select count(*) as total from wanshitong.blacklist where owner_id=? and guild_id=? ;", [member.id, message.guild.id]) ;
+      const [rows,fields] = await client.connection.promise().execute ("select count(*) as total from wanshitong.blacklist where user_id=? and guild_id=? ;", [member.id, message.guild.id]) ;
       message.reply (`${member.displayName} (${member.user.tag}) is ${rows[0].total?"":"NOT "}ban from the game !`)
     } catch (err) {
       console.log ("err list:", err) ;
@@ -35,10 +35,10 @@ exports.run = async (client, message, [key, ...user], level) => { // eslint-disa
   } else
   if (key === "list") {
     try {
-      const [rows,fields] = await client.connection.promise().execute ("select owner_id, guild_id from wanshitong.blacklist where guild_id=? ;", [message.guild.id]) ;
+      const [rows,fields] = await client.connection.promise().execute ("select user_id, guild_id from wanshitong.blacklist where guild_id=? ;", [message.guild.id]) ;
       let listBanned = "" ;
       rows.forEach(row => {
-        const member = message.guild.members.cache.find (u => u.id === row.owner_id) ;
+        const member = message.guild.members.cache.find (u => u.id === row.user_id) ;
         listBanned += `${member.displayName} (${member.user.tag})\n` ;
       }) ;
       message.channel.send (`= Blacklist =\n${listBanned}`, {code: "asciidoc"}) ;

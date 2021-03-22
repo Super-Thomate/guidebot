@@ -50,7 +50,20 @@ module.exports = async client => {
   client.connection.execute ("CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`owner_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `guild_id`)) ;", (err, rows) => {
+  /*
+  client.connection.execute ("drop table `blacklist` ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  */
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`user_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  /*
+  client.connection.execute ("drop table `gamelb` ;", (err, rows) => {
+    console.log ("err:",err) ;
+  }) ;
+  */
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL, `complete` SMALLINT NOT NULL DEFAULT 0, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
     console.log ("err:",err) ;
   }) ;
   
