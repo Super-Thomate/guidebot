@@ -63,7 +63,7 @@ module.exports = async client => {
     console.log ("err:",err) ;
   }) ;
   */
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`user_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`user_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, `type` varchar(128) not null, primary key (`user_id`, `guild_id`, `type`)) ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   /*

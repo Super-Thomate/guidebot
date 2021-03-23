@@ -282,7 +282,7 @@ module.exports = (client) => {
     const filter = async (m) => {
       return (    m.content.startsWith (`${prefix}`)
                && isCommandClaim (m.content.toLowerCase(), setting.commandClaim)
-               && ! await isBlackList (m.member, client)
+               && ! await client.isBlackList (m.member, "game")
              ) ;
       
     } ;
@@ -393,8 +393,8 @@ module.exports = (client) => {
     }) ;
     return isIt ;
   }
-  async function isBlackList (member, client) {
-    const [rows, fields] = await client.connection.promise().query ("select count(*) as ban from wanshitong.blacklist where user_id=? and guild_id=?", [member.id, member.guild.id]) ;
+  client.isBlackList = async (member, type) => {
+    const [rows, fields] = await client.connection.promise().query ("select count(*) as ban from wanshitong.blacklist where user_id=? and guild_id=? and type=?", [member.id, member.guild.id, type]) ;
     return (rows[0].ban != 0) ;
   }
   
