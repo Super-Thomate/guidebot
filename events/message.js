@@ -17,6 +17,31 @@ module.exports = async (client, message) => {
     return message.reply(`My prefix on this guild is \`${settings.prefix}\``);
   }
   
+  if ((settings.questionEnabled == "true") && message.content.startsWith (`<@!${client.user.id}>`) && message.content.endsWith("?")) {
+    const answer = [ "Essaye plus tard",
+                     "Essaye encore",
+                     "Pas d'avis",
+                     "C'est ton destin",
+                     "Le sort en est jeté",
+                     "Une chance sur deux",
+                     "Repose ta question",
+                     "D'après moi oui",
+                     "C'est certain",
+                     "Oui absolument",
+                     "Tu peux compter dessus",
+                     "Sans aucun doute",
+                     "Très probable",
+                     "Oui",
+                     "C'est bien parti",
+                     "C'est non",
+                     "Peu probable",
+                     "Faut pas rêver",
+                     "N'y compte pas",
+                     "Impossible"
+                   ] ;
+   message.reply (answer.random()+".") ;
+  }
+  
   // Here we will handle the trigger for character spawn
   // Toggle config => a command trigger or not the character spawn
   if ((settings.toggleCommandTrigger == "true") || (message.content.indexOf(settings.prefix) !== 0)) {

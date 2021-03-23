@@ -13,6 +13,7 @@ const defaultSettings = {
   "welcomeChannel": "welcome",
   "welcomeMessage": "Say hello to {{user}}, everyone! We all need a warm welcome sometimes :D",
   "welcomeEnabled": "false",
+  "questionEnabled": "false",
   // Everything for Minigame
    "occuranceDrop": 10.0, // Drop rate of a character after a message
    "toggleCommandTrigger": "false", // Toggle for whether or not a bot command will trigger the drop
