@@ -35,6 +35,17 @@ exports.run = async (client, message, args, level) => {
       } else {
        currentPage++ ;
       }
+      // DELETE USER REACTION
+      const userId = r.users.cache.filter (user => !user.bot).first().id ;
+      const userReactions = r.message.reactions.cache.filter(reaction => reaction.users.cache.has(userId));
+      try {
+        for (const reaction of userReactions.values()) {
+          await reaction.users.remove(userId);
+        }
+      } catch (error) {
+      	console.error('Failed to remove reactions.');
+      }
+      // END DELETE USER REACTION
       if (currentPage <=0) currentPage = numPage ;
       if (currentPage > numPage) currentPage = 1 ;
       body = await getBody (client, guild, totItem, maxLength, message, currentPage, maxPerPage) ;
