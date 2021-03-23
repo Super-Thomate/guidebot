@@ -49,6 +49,7 @@ module.exports = (client) => {
     "questionEnabled": "false",
     // Everything for Minigame
     "occuranceDrop": 10.0, // Drop rate of a character after a message
+    "roleComplete": "Renard-Esprit", // Role for completing the game
     "toggleCommandTrigger": "false", // Toggle for whether or not a bot command will trigger the drop
     "dropChannel": "library", // The channel where the bot will drop a character
     "claimTime": 10000, // Time in ms to claim an item after character drop
@@ -325,10 +326,28 @@ module.exports = (client) => {
       }
       // Add to inventory
       const author = collected.author ;
-      [rows,fields] = await client.connection.promise().query ("select count (*) as already from wanshitong.inventory where owner_id=? and item_id=? and guild_id=?;", [author.id, row.itemId, guild_id]) ;
+      [rows,fields] = await client.connection.promise().query ("select count (*) as already from wanshitong.inventory"+((character == 4)?"_event":"")+" where owner_id=? and item_id=? and guild_id=?;", [author.id, row.itemId, guild_id]) ;
+      // console.log (`for character ${character}:`, rows) ;
       already = rows[0].already ;
       if (! already) {
-        await client.connection.promise().execute ("insert into wanshitong.inventory (owner_id, item_id, guild_id) values (?, ?, ?) ;", [author.id, row.itemId, guild_id]) ;
+        await client.connection.promise().execute ("insert into wanshitong.inventory"+((character === 4)?"_event":"")+" (owner_id, item_id, guild_id) values (?, ?, ?) ;", [author.id, row.itemId, guild_id]) ;
+        if (character !== 4) {
+          [rows,fields] = await client.connection.promise().query ("select items from wanshitong.gamelb where user_id=? and guild_id=?;", [author.id, guild_id]) ;
+          if (rows.length) {
+            const maxItem = client.maxItem [channel.guild.id] ;
+            const complete = (rows [0].items +1 == maxItem) ;
+            await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1, complete=?"+(complete?", date_completed=NOW()":"")+" where user_id=? and guild_id=? ;", [complete, author.id, guild_id]) ;
+            if (complete) {
+              const roleComplete = setting.roleComplete ;
+              const role = channel.guild.roles.cache.find (r => r.name === roleComplete) ;
+              collected.member.roles.add(role).catch(console.error);
+              channel.send (`Félicitations **${collected.member.displayName}** ! Ta persévérance dans la quête des nombreux artéfacts t'octroie le privilège d'intégrer les rangs de mes serviles ${role.toString()}.`) ;
+            }
+          } else {
+            await client.connection.promise().execute ("insert into wanshitong.gamelb (user_id, guild_id) values (?, ?) on duplicate key update items=items ;", [author.id, guild_id]) ;
+          }
+        }
+        
       }
       characterEmbed
         .setTitle (`${row.characterName} repart.`)

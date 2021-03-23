@@ -1,8 +1,8 @@
 exports.run = async (client, message, args, level) => {
   const guild = message.guild ;
   const maxPerPage = 10 ;
-  var [rows, fields] = await client.connection.promise().query ("select owner_id, count (*) as total from `wanshitong`.`inventory` where guild_id=? group by owner_id ;", [message.guild.id]) ;
-  const numPage = Math.ceil (rows.length / maxPerPage) || 1 ;
+  var [rows, fields] = await client.connection.promise().query ("select count(*) as total from `wanshitong`.`gamelb` where guild_id=? ;", [message.guild.id]) ;
+  const numPage = Math.ceil (rows[0].total / maxPerPage) || 1 ;
   var currentPage = 1 ;
   // embed
   var characterEmbed = new client.Discord.MessageEmbed()
@@ -12,9 +12,7 @@ exports.run = async (client, message, args, level) => {
                              ;
   const descHeader = `  Rank.  | Items | User \n` ;
   var maxLength = descHeader.length ;
-  var [rows, fields] = await client.connection.promise().query ("select count(*) as total from wanshitong.`character` where guild_id=? and is_available=1;", [guild.id]) ;
-  const totItem = rows [0].total * 4 ;
-  var body = await getBody (client, guild, totItem, maxLength, message, currentPage, maxPerPage) ;
+  var body = await getBody (client, guild, maxLength, message, currentPage, maxPerPage) ;
   const descSeparator = `${"=".repeat(body [1])}\n` ;
   if (body[0].length) {
     characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}${body[0]}`+"```") ;
@@ -48,7 +46,7 @@ exports.run = async (client, message, args, level) => {
       // END DELETE USER REACTION
       if (currentPage <=0) currentPage = numPage ;
       if (currentPage > numPage) currentPage = 1 ;
-      body = await getBody (client, guild, totItem, maxLength, message, currentPage, maxPerPage) ;
+      body = await getBody (client, guild, maxLength, message, currentPage, maxPerPage) ;
       characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}${body[0]}`+"```") ;
       characterEmbed.setFooter (`${currentPage}/${numPage}`) ;
       leaderboard.edit (characterEmbed) ;
@@ -78,18 +76,18 @@ exports.help = {
 };
 
 
-async function getBody (client, guild, totItem, maxLength, message, page, maxPerPage) {
+async function getBody (client, guild, maxLength, message, page, maxPerPage) {
   let description = "" ;
   const limit = (page-1)*maxPerPage ;
-  let [rows, fields] = await client.connection.promise().query ("select owner_id, count(*) as items from wanshitong.inventory where guild_id=? group by owner_id order by items DESC limit "+limit+", "+maxPerPage+" ;", [guild.id]) ;
+  let [rows, fields] = await client.connection.promise().query ("select user_id, items, complete from `wanshitong`.`gamelb` where guild_id=? order by items desc, date_completed asc limit "+limit+", "+maxPerPage+" ;", [guild.id]) ;
   var ranking = 0 ;
   rows.forEach ( (row) => {
-    let guildMember = guild.members.cache.find(user => user.id === row.owner_id) ;
+    let guildMember = guild.members.cache.find(user => user.id === row.user_id) ;
     ranking++ ;
     let items = `${row.items}` ;
-    let complete = row.items>=totItem ;
-    let rankStr = `${complete?"🏵️":""}${ranking}.` ;
-    let newLine = ` ${" ".repeat (7-rankStr.length)}${rankStr} | ${" ".repeat (5-items.length)}${items} | ${row.owner_id === message.author.id ? "Vous => ":""}${guildMember.displayName} (${guildMember.user.tag})\n` ;
+    let complete = row.items>=client.maxItem [guild.id] || row.complete;
+    let rankStr = `${complete?"🦊️":""}${ranking}.` ;
+    let newLine = ` ${" ".repeat (7-rankStr.length)}${rankStr} | ${" ".repeat (5-items.length)}${items} | ${row.user_id === message.author.id ? "Vous => ":""}${guildMember.displayName} (${guildMember.user.tag})\n` ;
     maxLength = Math.max(maxLength, newLine.length) ;
     description += newLine ;
   }) ;

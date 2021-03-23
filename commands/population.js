@@ -35,6 +35,7 @@ exports.run = async (client, message, [action, value], level) => { // eslint-dis
     }) ;
     await message.channel.send(`= Population =\n${textFinal}\n= ${page}/${numPage} =`, {code: "asciidoc"});
   } else
+  
   if (action === "message" || action === "m") {
     try {
       const [rows, fields] = await client.connection.promise().query ("select message, `drop` from wanshitong.`occurance` where guild_id=? ;", [message.guild.id]) ;

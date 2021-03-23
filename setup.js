@@ -16,6 +16,7 @@ const defaultSettings = {
   "questionEnabled": "false",
   // Everything for Minigame
    "occuranceDrop": 10.0, // Drop rate of a character after a message
+   "roleComplete": "Renard-Esprit", // Role for completing the game
    "toggleCommandTrigger": "false", // Toggle for whether or not a bot command will trigger the drop
    "dropChannel": "library", // The channel where the bot will drop a character
    "claimTime": 10000, // Time in ms to claim an item after character drop
