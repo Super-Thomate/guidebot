@@ -71,15 +71,13 @@ module.exports = async client => {
     if (err) console.log ("err:",err) ;
   }) ;
   
-  client.guilds.cache.forEach (guild => {
-     // get max item for every guild
-     client.connection.execute ("select count (*) as allItems from `item` as A, `character` as B where A.character_id=B.id and B.is_available=1 and B.rarity<>4 ;", (err, rows) => {
-       if (err) console.log ("err:",err) ;
-       const allItems = rows [0].allItems ;
-       client.maxItem = allItems ;
-       // console.log (client.maxItem) ;
-     }) ;
-  }) ;
+  client.connection.execute ("select count (*) as allItems from `item` as A, `character` as B where A.character_id=B.id and B.is_available=1 and B.rarity<>4 ;", (err, rows) => {
+    if (err) console.log ("err:",err) ;
+    if (rows && rows.length) {
+      const allItems = rows [0].allItems ;
+      client.maxItem = allItems ;
+    }
+  });
   
   
 };
