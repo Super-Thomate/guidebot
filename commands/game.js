@@ -11,6 +11,11 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
     if (!id) return message.reply("Please specify a characterId to edit.");
     message.reply ("Do stuff") ;
   } else
+  if (action === "editItem") {
+    // User must specify an id.
+    if (!id) return message.reply("Please specify an itemId to edit.");
+    message.reply ("Do stuff") ;
+  } else
   if (action === "show") {
     if (!id) return message.reply("Please specify a characterId to show.");
     try {
