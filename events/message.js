@@ -17,8 +17,8 @@ module.exports = async (client, message) => {
     return message.reply(`My prefix on this guild is \`${settings.prefix}\``);
   }
 
-  console.log ("message.content: ", message.content) ;
-  if ((! await client.isBlackList (message.member, "magic")) && (settings.questionEnabled == "true") && message.content.startsWith (`<@!${client.user.id}>`) && message.content.endsWith("?")) {
+  // console.log ("message.content: ", message.content) ;
+  if ((! await client.isBlackList (message.member, "magic")) && (settings.questionEnabled == "true") && (message.content.startsWith (`<@${client.user.id}>`) || message.content.startsWith (`<@!${client.user.id}>`) || message.content.startsWith (`<@?${client.user.id}>`)) && message.content.endsWith("?")) {
     const answer = [ "Essaye plus tard",
                      "Essaye encore",
                      "Pas d'avis",
