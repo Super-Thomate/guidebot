@@ -11,7 +11,8 @@ exports.run = (client, message, args, level) => { // eslint-disable-line no-unus
 • Servers    :: ${client.guilds.cache.size.toLocaleString()}
 • Channels   :: ${client.channels.cache.size.toLocaleString()}
 • Discord.js :: v${version}
-• Node       :: ${process.version}`, {code: "asciidoc"});
+• Node       :: ${process.version}
+• Items      :: ${client.maxItem}`, {code: "asciidoc"});
 };
 
 exports.conf = {

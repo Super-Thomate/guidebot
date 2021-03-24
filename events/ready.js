@@ -20,28 +20,20 @@ module.exports = async client => {
   // DATABASE
   /*
   -- character
-  CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0,`guild_id` BIGINT NOT NULL, primary key (`id`)) ;
+  CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, primary key (`id`)) ;
   -- item
-  CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`id`)) ;
+  CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, primary key (`id`)) ;
   -- inventory
   CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;
   -- leaderboard
   CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL, `complete` SMALLINT NOT NULL DEFAULT 0, `date_completed` DATETIME NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;
   */
-  /*
-  client.connection.execute ("drop table `character` ;", (err, rows) => {
-    console.log ("err:",err) ;
-  }) ;
-  */
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, `guild_id` BIGINT NOT NULL, primary key (`id`)) ;", (err, rows) => {
+  //client.connection.execute ("drop table `character` ;", (err, rows) => {if (err) console.log ("err:",err) ;}) ;
+  //client.connection.execute ("drop table `item` ;", (err, rows) => {if (err) console.log ("err:",err) ;}) ;
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, primary key (`id`)) ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
-  /*
-  client.connection.execute ("drop table `item` ;", (err, rows) => {
-    console.log ("err:",err) ;
-  }) ;
-  */
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, primary key (`id`)) ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   /*
@@ -81,10 +73,10 @@ module.exports = async client => {
   
   client.guilds.cache.forEach (guild => {
      // get max item for every guild
-     client.connection.execute ("select count (*) as allItems from `item` as A, `character` as B where A.character_id=B.id and B.is_available=1 and B.rarity<>4 and A.guild_id=? ;", [guild.id], (err, rows) => {
+     client.connection.execute ("select count (*) as allItems from `item` as A, `character` as B where A.character_id=B.id and B.is_available=1 and B.rarity<>4 ;", (err, rows) => {
        if (err) console.log ("err:",err) ;
        const allItems = rows [0].allItems ;
-       client.maxItem [guild.id] = allItems ;
+       client.maxItem = allItems ;
        // console.log (client.maxItem) ;
      }) ;
   }) ;

@@ -57,7 +57,7 @@ client.connection.on ('error', err => {
 client.Discord = Discord ; // maybe
 
 client.alreadyDropped = {} ;
-client.maxItem = {} ;
+client.maxItem = -1 ;
 
 // We're doing real fancy node 8 async/await stuff here, and to do that
 // we need to wrap stuff in an anonymous function. It's annoying but it works.

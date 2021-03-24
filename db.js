@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARC
 -- inventory
 CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;
 */
-const guild_id = process.argv [2] ;
 fs.createReadStream('wst.csv')
   .pipe(csv())
   .on('data', (row) => {
@@ -41,7 +40,7 @@ fs.createReadStream('wst.csv')
            ;
      // console.log (`${name} => ${name.trim().length}`)
      if (name.trim().length)
-       connection.execute ("insert into wanshitong.`character` (name, image, rarity, is_available, guild_id) values (?, ?, ?, ?, ?) ;", [name, image, rarity, available, guild_id], (err, res) => {
+       connection.execute ("insert into wanshitong.`character` (name, image, rarity, is_available) values (?, ?, ?, ?) ;", [name, image, rarity, available], (err, res) => {
          //console.log (res) ;
          console.error ("err character "+current, err) ;
          const character_id = res.insertId ;
@@ -53,10 +52,10 @@ fs.createReadStream('wst.csv')
          console.log ("character_id:", character_id)
          console.log ("guild_id:", guild_id)
          */
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id, guild_id) values (?, 1, ?, ?) ;", [itemCommon, character_id, guild_id], (err, res) => {console.error ("err common "+current, err) ;}) ;
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id, guild_id) values (?, 2, ?, ?) ;", [itemUncommon, character_id, guild_id], (err, res) => {console.error ("err unco "+current, err) ;}) ;
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id, guild_id) values (?, 3, ?, ?) ;", [itemRare, character_id, guild_id], (err, res) => {console.error ("err rare "+current, err) ;}) ;
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id, guild_id) values (?, 4, ?, ?) ;", [itemEpic, character_id, guild_id], (err, res) => {console.error ("err epic "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 1, ?) ;", [itemCommon, character_id], (err, res) => {console.error ("err common "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 2, ?) ;", [itemUncommon, character_id], (err, res) => {console.error ("err unco "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 3, ?) ;", [itemRare, character_id], (err, res) => {console.error ("err rare "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 4, ?) ;", [itemEpic, character_id], (err, res) => {console.error ("err epic "+current, err) ;}) ;
        }) ;
   })
   .on('end', () => {

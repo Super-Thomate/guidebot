@@ -4,11 +4,11 @@ exports.run = async (client, message, [action, value], level) => { // eslint-dis
     const maxPerPage = 20 ;
     const page = (typeof value != 'undefined' && value != null) ? Number.parseInt (value) : 1;
     if (Number.isNaN (page)) return message.channel.send (`Value ${value} for page is not a number.`) ;
-    var [rows, fields] = await client.connection.promise().query ("select count (*) as total from `wanshitong`.`character` where guild_id=? ;", [message.guild.id]) ;
+    var [rows, fields] = await client.connection.promise().query ("select count (*) as total from `wanshitong`.`character` ;") ;
     const numPage = Math.ceil (rows[0].total / maxPerPage) || 1 ;
     if (page > numPage) return message.channel.send (`${page} is greater than the maximum number of page ${numPage}`) ;
     const limit = (page-1)*maxPerPage ;
-    [rows, fields] = await client.connection.promise().query ("select `id`, `name`, `rarity`, `is_available` from `wanshitong`.`character` where guild_id=? limit "+limit+","+maxPerPage, [message.guild.id]) ;
+    [rows, fields] = await client.connection.promise().query ("select `id`, `name`, `rarity`, `is_available` from `wanshitong`.`character` limit "+limit+","+maxPerPage) ;
     //[rows, fields] = await client.connection.promise().query ("select `id`, `name`, `rarity` from `wanshitong`.`character` limit 0,20") ;
     let textFinal = "" ;
     rows.forEach ((row) => {
@@ -23,11 +23,11 @@ exports.run = async (client, message, [action, value], level) => { // eslint-dis
     const maxPerPage = 20 ;
     const page = (typeof value != 'undefined' && value != null) ? Number.parseInt (value) : 1;
     if (Number.isNaN (page)) return message.channel.send (`Value ${value} for page is not a number.`) ;
-    var [rows, fields] = await client.connection.promise().query ("select count (*) as total from `wanshitong`.`item` where guild_id=? ;", [message.guild.id]) ;
+    var [rows, fields] = await client.connection.promise().query ("select count (*) as total from `wanshitong`.`item` ;") ;
     const numPage = Math.ceil (rows[0].total / maxPerPage) || 1 ;
     if (page > numPage) return message.channel.send (`${page} is greater than the maximum number of page ${numPage}`) ;
     const limit = (page-1)*maxPerPage ;
-    [rows, fields] = await client.connection.promise().query ("select A.`id` as itemId, A.`name` as itemName, A.`rarity` as itemRarity, B.`name` as characterName from `wanshitong`.`item` as A inner join `wanshitong`.`character` as B where B.id = A.character_id and A.guild_id=? limit "+limit+","+maxPerPage, [message.guild.id]) ;
+    [rows, fields] = await client.connection.promise().query ("select A.`id` as itemId, A.`name` as itemName, A.`rarity` as itemRarity, B.`name` as characterName from `wanshitong`.`item` as A inner join `wanshitong`.`character` as B where B.id = A.character_id limit "+limit+","+maxPerPage) ;
     let textFinal = "" ;
     rows.forEach ((row) => {
       let textCurrent = `[${client.getRarityItem (row.itemRarity)}] ${row.itemName} (${row.characterName}) \n` ;

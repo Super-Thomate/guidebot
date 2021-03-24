@@ -303,8 +303,8 @@ module.exports = (client) => {
                            "        , B.`name` as itemName \n"+
                            "        , B.`rarity` as itemRarity \n"+
                            " from `wanshitong`.`character` as A, `wanshitong`.`item` as B \n"+
-                           "where A.`rarity` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.guild_id=? AND A.`is_available`=1 ;"
-                         , [character, item, guild_id]
+                           "where A.`rarity` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.`is_available`=1 ;"
+                         , [character, item]
                        ) ;
     else 
       var [rows,fields] =
@@ -318,8 +318,8 @@ module.exports = (client) => {
                            "        , B.`name` as itemName \n"+
                            "        , B.`rarity` as itemRarity \n"+
                            " from `wanshitong`.`character` as A, `wanshitong`.`item` as B \n"+
-                           "where A.`id` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.guild_id=? AND A.`is_available`=1 ;"
-                         , [givenId, item, guild_id]
+                           "where A.`id` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.`is_available`=1 ;"
+                         , [givenId, item]
                        ) ;
     if (!rows.length) return await channel.send ("An error occured !") ;
     const row = rows.random() ; //get one among all the possibilities
@@ -354,8 +354,7 @@ module.exports = (client) => {
         if (character !== 4) {
           [rows,fields] = await client.connection.promise().query ("select items from wanshitong.gamelb where user_id=? and guild_id=?;", [author.id, guild_id]) ;
           if (rows.length) {
-            const maxItem = client.maxItem [channel.guild.id] ;
-            const complete = (rows [0].items +1 == maxItem) ;
+            const complete = (rows [0].items +1 == client.maxItem) ;
             await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1, complete=?"+(complete?", date_completed=NOW()":"")+" where user_id=? and guild_id=? ;", [complete, author.id, guild_id]) ;
             if (complete) {
               const roleComplete = setting.roleComplete ;
