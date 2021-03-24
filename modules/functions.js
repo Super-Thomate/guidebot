@@ -253,6 +253,10 @@ module.exports = (client) => {
     return -1 ;
   } ;
   
+  client.getRarityFromName = (rarityName) => {
+    return  ["high","regular","low","event"].indexOf (rarityName)+1 ;
+  } ;
+  
   client.getRarityCharacter = (rarity) => {
     return ["Haut","Régulier","Bas","Événementiel"] [rarity-1] ;
   } ;
@@ -273,9 +277,9 @@ module.exports = (client) => {
    "left": "#B20C20"
   } ;
   
-  client.dropCharacter = async (channel, setting) => {
+  client.dropCharacter = async (channel, setting, givenRarity=null, givenId=null) => {
     const commandClaim = setting.commandClaim.random() ;
-    const character = client.getRandomRarityInt (setting.characterRate) ;
+    const character = givenRarity || client.getRandomRarityInt (setting.characterRate) ;
     const item = client.getRandomRarityInt (setting.itemRate) ;
     const guild_id = channel.guild.id ;
     const prefix = setting.prefix || defaultSettings.prefix ;
@@ -286,10 +290,10 @@ module.exports = (client) => {
              ) ;
       
     } ;
-    
-    if (character === -1 || item === -1) return channel.send ("An error occured ! Check your rate.") ;
-    var [rows,fields] =
-      await client
+    if (givenId === null && (character === -1 || item === -1)) return channel.send ("An error occured ! Check your rate.") ;
+    if (givenId === null)
+      var [rows,fields] =
+        await client
               .connection
               .promise ()
               .execute (   "select    A.`id` as characterId \n"+
@@ -302,6 +306,22 @@ module.exports = (client) => {
                            "where A.`rarity` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.guild_id=? AND A.`is_available`=1 ;"
                          , [character, item, guild_id]
                        ) ;
+    else 
+      var [rows,fields] =
+        await client
+              .connection
+              .promise ()
+              .execute (   "select    A.`id` as characterId \n"+
+                           "        , A.`name` as characterName \n"+
+                           "        , A.`image`as characterImage \n"+
+                           "        , B.`id` as itemId \n"+
+                           "        , B.`name` as itemName \n"+
+                           "        , B.`rarity` as itemRarity \n"+
+                           " from `wanshitong`.`character` as A, `wanshitong`.`item` as B \n"+
+                           "where A.`id` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.guild_id=? AND A.`is_available`=1 ;"
+                         , [givenId, item, guild_id]
+                       ) ;
+    if (!rows.length) return await channel.send ("An error occured !") ;
     const row = rows.random() ; //get one among all the possibilities
     var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor(colors.base)
