@@ -64,7 +64,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
   if (action === "addvalue") {
     if (!key) return message.reply("Please specify a key to add value to.");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
-    if (!overrides[key]) return message.reply("This key does not have an override and is using defaults.");
+    if (!overrides[key]) overrides[key] = defaults[key] ; // workaround
     if (! Array.isArray (overrides[key])) return message.reply("This key does not have multiple values.");
     let oldArray = client.settings.get(message.guild.id) [key] ;
     const joinedValue = value.join(" ");
