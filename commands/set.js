@@ -66,7 +66,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
     if (!overrides[key]) overrides[key] = defaults[key] ; // workaround
     if (! Array.isArray (overrides[key])) return message.reply("This key does not have multiple values.");
-    let oldArray = client.settings.get(message.guild.id) [key] ;
+    let oldArray = overrides [key] ;
     const joinedValue = value.join(" ");
     oldArray.push (joinedValue) ;
     client.settings.set(message.guild.id, oldArray, key) ;
@@ -77,9 +77,9 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
   if (action === "delvalue") {
     if (!key) return message.reply("Please specify a key to delete value to.");
     if (!defaults[key]) return message.reply("This key does not exist in the settings");
-    if (!overrides[key]) return message.reply("This key does not have an override and is using defaults.");
+    if (!overrides[key]) overrides[key] = defaults[key] ; // workaround
     if (! Array.isArray (overrides[key])) return message.reply("This key does not have multiple values.");
-    let oldArray = client.settings.get(message.guild.id) [key] ;
+    let oldArray = overrides [key] ;
     const joinedValue = value.join(" ");
     oldArray.removeItem (joinedValue) ;
     client.settings.set(message.guild.id, oldArray, key) ;
