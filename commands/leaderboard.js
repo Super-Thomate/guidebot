@@ -80,7 +80,7 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
   let description = "" ;
   const limit = (page-1)*maxPerPage ;
   let [rows, fields] = await client.connection.promise().query ("select user_id, items, complete from `wanshitong`.`gamelb` where guild_id=? order by items desc, date_completed asc limit "+limit+", "+maxPerPage+" ;", [guild.id]) ;
-  var ranking = 0 ;
+  var ranking = (page-1)*maxPerPage ;
   rows.forEach ( (row) => {
     let guildMember = guild.members.cache.find(user => user.id === row.user_id) ;
     ranking++ ;
