@@ -147,18 +147,20 @@ exports.help = {
 
 async function getInventory (client, author, currentPage, guild_id, maxPerPage = 20) {
   const limit = (currentPage-1)*maxPerPage ;
-  const [rows, fields] = await client.connection.promise().query ("select A.`name` as characterName , B.`name` as itemName , B.`rarity` as itemRarity from `wanshitong`.`character` as A, `wanshitong`.`item` as B, `wanshitong`.`inventory` as C where C.`owner_id` = ? and B.`id` = C.`item_id` and  A.`id` = B.`character_id` and C.guild_id=? order by A.name, B.rarity limit "+limit+","+maxPerPage+";", [author, guild_id]) ;
+  const [rows, fields] = await client.connection.promise().query ("select A.`id` as characterId, A.`name` as characterName , B.`name` as itemName , B.`rarity` as itemRarity from `wanshitong`.`character` as A, `wanshitong`.`item` as B, `wanshitong`.`inventory` as C where C.`owner_id` = ? and B.`id` = C.`item_id` and  A.`id` = B.`character_id` and C.guild_id=? order by A.name, A.id, B.rarity limit "+limit+","+maxPerPage+";", [author, guild_id]) ;
   //console.log (rows) ;
   let allFields = [] ;
   let currentCharacter = "" ;
+  let currentCharacterId = 0 ;
   let value = "" ;
   rows.forEach ((row) => {
-    if (currentCharacter != row.characterName) {
+    if (currentCharacterId != row.characterId) {
       if (currentCharacter.length) {
         allFields.push ({"name": currentCharacter, "value": value}) ;
       }
       //console.log ("allFields:", allFields) ;
       currentCharacter = row.characterName ;
+      currentCharacterId = row.characterId ;
       value = "" ;
     }
     value += `${client.getRarityEmoji (row.itemRarity)} ${client.getRarityItem (row.itemRarity)} - ${row.itemName.upperCaseFirstLetter()}\n` ;
@@ -171,18 +173,20 @@ async function getInventory (client, author, currentPage, guild_id, maxPerPage =
 
 async function getInventoryEvent (client, author, currentPage, guild_id, maxPerPage = 20) {
   const limit = (currentPage-1)*maxPerPage ;
-  const [rows, fields] = await client.connection.promise().query ("select A.`name` as characterName , B.`name` as itemName , B.`rarity` as itemRarity from `wanshitong`.`character` as A, `wanshitong`.`item` as B, `wanshitong`.`inventory_event` as C where C.`owner_id` = ? and B.`id` = C.`item_id` and  A.`id` = B.`character_id` and C.guild_id=? order by A.name, B.rarity limit "+limit+","+maxPerPage+";", [author, guild_id]) ;
+  const [rows, fields] = await client.connection.promise().query ("select A.`id` as characterId, A.`name` as characterName , B.`name` as itemName , B.`rarity` as itemRarity from `wanshitong`.`character` as A, `wanshitong`.`item` as B, `wanshitong`.`inventory_event` as C where C.`owner_id` = ? and B.`id` = C.`item_id` and  A.`id` = B.`character_id` and C.guild_id=? order by A.name, A.id, B.rarity limit "+limit+","+maxPerPage+";", [author, guild_id]) ;
   //console.log (rows) ;
   let allFields = [] ;
   let currentCharacter = "" ;
+  let currentCharacterId = 0 ;
   let value = "" ;
   rows.forEach ((row) => {
-    if (currentCharacter != row.characterName) {
+    if (currentCharacterId != row.characterId) {
       if (currentCharacter.length) {
         allFields.push ({"name": currentCharacter, "value": value}) ;
       }
       //console.log ("allFields:", allFields) ;
       currentCharacter = row.characterName ;
+      currentCharacterId = row.characterId ;
       value = "" ;
     }
     value += `${client.getRarityEmoji (row.itemRarity)} ${client.getRarityItem (row.itemRarity)} - ${row.itemName.upperCaseFirstLetter()}\n` ;
