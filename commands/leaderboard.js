@@ -110,6 +110,8 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
     maxLength = Math.max(maxLength, newLine.length) ;
     description += newLine ;
   }) ;
-  
+  for (let row of rows) {
+    console.log (row) ;
+  }
   return [description, maxLength] ;
 }
