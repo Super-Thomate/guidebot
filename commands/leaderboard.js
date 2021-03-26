@@ -13,7 +13,8 @@ exports.run = async (client, message, args, level) => {
   const descHeader = `  Rank.  | Items | User \n` ;
   var maxLength = descHeader.length ;
   var body = await getBody (client, guild, maxLength, message, currentPage, maxPerPage) ;
-  const descSeparator = `${"=".repeat(body [1])}\n` ;
+  var descSeparator = `${"=".repeat(Math.min (body [1], 61))}\n` ;
+  // ============================================================= << 61 characters max
   if (body[0].length) {
     characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}${body[0]}`+"```") ;
     let leaderboard = await message.channel.send(characterEmbed);
@@ -47,6 +48,7 @@ exports.run = async (client, message, args, level) => {
       if (currentPage <=0) currentPage = numPage ;
       if (currentPage > numPage) currentPage = 1 ;
       body = await getBody (client, guild, maxLength, message, currentPage, maxPerPage) ;
+      descSeparator = `${"=".repeat(Math.min (body [1], 61))}\n` ;
       characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}${body[0]}`+"```") ;
       characterEmbed.setFooter (`${currentPage}/${numPage}`) ;
       leaderboard.edit (characterEmbed) ;
