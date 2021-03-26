@@ -87,21 +87,6 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
     if (! guildMember) {
       console.log (`GuildMember not found in cache with user_id = ${row.user_id}`) ;
       guildMember = {"displayName": "NONAME", "user":{"tag": "NOTAG"}} ;
-      /**/
-      guild.members.fetch (row.user_id.toString()).then (member => {
-        console.log (`fetch ('${row.user_id}') => `, member) ;
-        console.log (`displayName ${member.displayName}, tag ${member.user.tag} `) ;
-        // guildMember = member ;
-        guild.members.cache.set (row.user_id.toString(), member) ;
-      }).catch (console.error);
-      /**/
-      /*
-      try {
-        guildMember = await guild.members.fetch (row.user_id.toString()) ;
-      } catch (err) {
-        console.error (err) ;
-      }
-      */
     }
     let items = `${row.items}` ;
     let complete = row.items>=client.maxItem || row.complete;
@@ -110,8 +95,10 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
     maxLength = Math.max(maxLength, newLine.length) ;
     description += newLine ;
   }) ;
+  /*
   for (let row of rows) {
     console.log (row) ;
   }
+  */
   return [description, maxLength] ;
 }
