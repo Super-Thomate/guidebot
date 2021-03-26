@@ -87,9 +87,9 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
     if (! guildMember) {
       console.log (`GuildMember not found in cache with user_id = ${row.user_id}`) ;
       guildMember = {"displayName": "NONAME", "user":{"tag": "NOTAG"}} ;
-      /*guild.members.fetch (row.user_id).then (member => {
+      guild.members.fetch (row.user_id.toString()).then (member => {
         console.log (`fetch ('${row.user_id}') => `, member) ;
-      }).catch (console.error);*/
+      }).catch (console.error);
     }
     let items = `${row.items}` ;
     let complete = row.items>=client.maxItem || row.complete;
