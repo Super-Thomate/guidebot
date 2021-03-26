@@ -91,7 +91,8 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
       guild.members.fetch (row.user_id.toString()).then (member => {
         console.log (`fetch ('${row.user_id}') => `, member) ;
         console.log (`displayName ${member.displayName}, tag ${member.user.tag} `) ;
-        guildMember = member ;
+        // guildMember = member ;
+        guild.members.cache.set (row.user_id.toString(), member) ;
       }).catch (console.error);
       /**/
       /*
