@@ -89,6 +89,7 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
       guildMember = {"displayName": "NONAME", "user":{"tag": "NOTAG"}} ;
       guild.members.fetch (row.user_id.toString()).then (member => {
         console.log (`fetch ('${row.user_id}') => `, member) ;
+        console.log (`displayName ${member.displayName}, tag ${member.user.tag} `) ;
       }).catch (console.error);
     }
     let items = `${row.items}` ;
