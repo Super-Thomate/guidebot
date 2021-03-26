@@ -83,7 +83,8 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
   var ranking = (page-1)*maxPerPage ;
   rows.forEach ( async (row) => {
     ranking++ ;
-    let guildMember = guild.members.cache.find(user => user.id === row.user_id) ;
+    //let guildMember = guild.members.cache.find(user => user.id === row.user_id) ;
+    let guildMember = await guild.members.fetch (row.user_id.toString()) ;
     if (! guildMember) {
       console.log (`GuildMember not found in cache with user_id = ${row.user_id}`) ;
       guildMember = {"displayName": "NONAME", "user":{"tag": "NOTAG"}} ;
