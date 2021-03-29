@@ -26,6 +26,30 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
         return message.reply (`Key ${key} is unknown.`)
     }
   } else
+  if (action === "bulkedit") {
+    // User must specify an id.
+    const level = client.permlevel(message);
+    if (level < 4) return ;
+    if (!id) return message.reply("Please specify two characterId to edit (start-end).");
+    let id_start_end = id.split('-') ;
+    if (id_start_end.length !==2 ) return message.reply("Please specify two characterId to edit (start-end).")
+    if (!key) return message.reply ("Please specify a key to edit.") ;
+    switch (key) {
+      case 'available':
+      case 'dispo':
+        let is_available = value.join('').toLowerCase() === "true" ? 1 : 0 ;
+        try {
+         await client.connection.promise().query("update `character` set is_available=? where id>=? and id<=? ;", [is_available, id_start_end[0], id_start_end[1]]) ;
+         return message.reply (`key is_available is now ${is_available}.`)
+        } catch (err) {
+          console.error ("err on edit character:", err) ;
+          return message.reply ("An error occured.")
+        }
+      break ;
+      default:
+        return message.reply (`Key ${key} is unknown.`)
+    }
+  }  else
   if (action === "show") {
     if (!id) return message.reply("Please specify a characterId to show.");
     try {
