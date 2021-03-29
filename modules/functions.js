@@ -230,25 +230,13 @@ module.exports = (client) => {
   });
   
   // GAME
-  client.getRandomRarity = (rarityRate) => {
-    let currentScore = 0 ;
-    let number = Math.floor(Math.random() * 100) + 1;
-    for (let key in rarityRate) {
-      currentScore+=rarityRate [key];
-      if (number <= currentScore)
-       return key ;
-    }
-    return -1 ;
-  } ;
-  
-  client.getRandomRarityInt = (rarityRate) => {
-    let currentScore = 0 ;
-    let number = Math.floor(Math.random() * 100) + 1;
-    let i = 0 ;
+  client.getRandomRarity = (rarityRate, retKey=false) => {
+    let currentScore = 0 , i = 0 ;
+    const number = Math.floor(Math.random() * 100) + 1;
     for (let key in rarityRate) {
       currentScore+=rarityRate [key];
       i++ ;
-      if (number <= currentScore) return i ;
+      if (number <= currentScore) return retKey ? key : i ;
     }
     return -1 ;
   } ;
@@ -279,8 +267,8 @@ module.exports = (client) => {
   
   client.dropCharacter = async (channel, setting, givenRarity=null, givenId=null) => {
     const commandClaim = setting.commandClaim.random() ;
-    const character = givenRarity || client.getRandomRarityInt (setting.characterRate) ;
-    const item = client.getRandomRarityInt (setting.itemRate) ;
+    const character = givenRarity || client.getRandomRarity (setting.characterRate) ;
+    const item = client.getRandomRarity (setting.itemRate) ;
     const guild_id = channel.guild.id ;
     const prefix = setting.prefix || defaultSettings.prefix ;
     const filter = async (m) => {
