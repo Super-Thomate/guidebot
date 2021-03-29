@@ -30,11 +30,11 @@ module.exports = async client => {
   */
   //client.connection.execute ("drop table `character` ;", (err, rows) => {if (err) console.log ("err:",err) ;}) ;
   //client.connection.execute ("drop table `item` ;", (err, rows) => {if (err) console.log ("err:",err) ;}) ;
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, primary key (`id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, primary key (`id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, primary key (`id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, primary key (`id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   /*
@@ -45,10 +45,10 @@ module.exports = async client => {
     console.log ("err:",err) ;
   }) ;
   */
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `inventory` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `inventory_event` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `inventory_event` (`owner_id` BIGINT NOT NULL, `item_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, primary key (`owner_id`, `item_id`, `guild_id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   /*
@@ -56,7 +56,7 @@ module.exports = async client => {
     console.log ("err:",err) ;
   }) ;
   */
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`user_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, `type` varchar(128) not null, primary key (`user_id`, `guild_id`, `type`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `blacklist` (`user_id` BIGINT NOT NULL, `guild_id` BIGINT NOT NULL, `type` varchar(128) not null, primary key (`user_id`, `guild_id`, `type`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   /*
@@ -64,11 +64,30 @@ module.exports = async client => {
     if (err) console.log ("err:",err) ;
   }) ;
   */
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL default 1, `complete` SMALLINT NOT NULL DEFAULT 0, `date_completed` DATETIME NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL default 1, `complete` SMALLINT NOT NULL DEFAULT 0, `date_completed` DATETIME NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   // Table for debug occurance
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `occurance` (`message` BIGINT NOT NULL default 0, `drop` BIGINT NOT NULL default 0, `guild_id` BIGINT NOT NULL, primary key (`guild_id`)) ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `occurance` (`message` BIGINT NOT NULL default 0, `drop` BIGINT NOT NULL default 0, `guild_id` BIGINT NOT NULL, primary key (`guild_id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
+    if (err) console.log ("err:",err) ;
+  }) ;
+  // Table for debug count each drop
+  /*
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `gamecount` (`id` INT NOT NULL, `number` BIGINT NOT NULL default 0, `type` SMALLINT NOT NULL, guild_id` BIGINT NOT NULL, primary key (`id`, `guild_id`)) ;", (err, rows) => {
+    if (err) console.log ("err:",err) ;
+  }) ;
+  */
+  // ENCODING
+  client.connection.execute ("ALTER TABLE wanshitong.`character` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
+    if (err) console.log ("err:",err) ;
+  }) ;
+  client.connection.execute ("ALTER TABLE wanshitong.`item` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
+    if (err) console.log ("err:",err) ;
+  }) ;
+  client.connection.execute ("ALTER TABLE wanshitong.`character` CHANGE name name VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", (err, rows) => {
+    if (err) console.log ("err:",err) ;
+  }) ;
+  client.connection.execute ("ALTER TABLE wanshitong.`item` CHANGE name name VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   

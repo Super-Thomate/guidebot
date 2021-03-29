@@ -6,7 +6,7 @@ const config = require("./config.js");
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection(config.mysqlConnection);
-/*
+
 connection.execute ("TRUNCATE TABLE `wanshitong`.`character` ;", (err, rows) => {
   console.log ("err:",err) ;
   // console.log ("rows:", rows) ;
@@ -15,7 +15,7 @@ connection.execute ("TRUNCATE TABLE `wanshitong`.`item` ;", (err, rows) => {
   console.log ("err:",err) ;
   // console.log ("rows:", rows) ;
 }) ;
-*/
+
 // 494812563016777729
 /*
 -- character
@@ -42,7 +42,7 @@ fs.createReadStream('wst.csv')
      if (name.trim().length)
        connection.execute ("insert into wanshitong.`character` (name, image, rarity, is_available) values (?, ?, ?, ?) ;", [name, image, rarity, available], (err, res) => {
          //console.log (res) ;
-         console.error ("err character "+current, err) ;
+         if (err) return console.error ("err character "+current, err) ;
          const character_id = res.insertId ;
          /*
          console.log ("itemCommon:", itemCommon)
@@ -61,7 +61,44 @@ fs.createReadStream('wst.csv')
   .on('end', () => {
     console.log('CSV file successfully processed');
   });
-  
+
+
+fs.createReadStream('wst_avril.csv')
+  .pipe(csv())
+  .on('data', (row) => {
+     const   name = row ["Perso"]
+           , image = row ["URL image"]
+           , rarity = getRarityCharacter (row ["classe"])
+           , itemCommon = row ["Commun"]
+           , itemUncommon = row ["Non-commun"]
+           , itemRare = row ["Rare"]
+           , itemEpic = row ["Épique"]
+           , current = row ["#"]
+           , available = (rarity !=4)
+           ;
+     // console.log (`${name} => ${name.trim().length}`)
+     if (name.trim().length)
+       connection.execute ("insert into wanshitong.`character` (name, image, rarity, is_available) values (?, ?, ?, ?) ;", [name, image, rarity, available], (err, res) => {
+         //console.log (res) ;
+          if (err) return console.error ("err character "+current, err) ;
+         const character_id = res.insertId ;
+         /*
+         console.log ("itemCommon:", itemCommon)
+         console.log ("itemUncommon:", itemUncommon)
+         console.log ("itemRare:", itemRare)
+         console.log ("itemEpic:", itemEpic)
+         console.log ("character_id:", character_id)
+         console.log ("guild_id:", guild_id)
+         */
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 1, ?) ;", [itemCommon, character_id], (err, res) => {console.error ("err common "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 2, ?) ;", [itemUncommon, character_id], (err, res) => {console.error ("err unco "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 3, ?) ;", [itemRare, character_id], (err, res) => {console.error ("err rare "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 4, ?) ;", [itemEpic, character_id], (err, res) => {console.error ("err epic "+current, err) ;}) ;
+       }) ;
+  })
+  .on('end', () => {
+    console.log('CSV file successfully processed');
+  });
   
 function getRarityCharacter (rarity) {
   return ["high", "regular", "low", "event"].indexOf (rarity)+1 ;
