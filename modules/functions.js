@@ -237,6 +237,9 @@ module.exports = (client) => {
     for (let key in rarityRate) {
       currentScore+=rarityRate [key];
       i++ ;
+      console.log ("currentScore:", currentScore) ;
+      console.log ("key:", key) ;
+      console.log ("key:", i) ;
       if (number <= currentScore) return retKey ? key : i ;
     }
     return -1 ;
