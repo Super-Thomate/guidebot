@@ -233,13 +233,13 @@ module.exports = (client) => {
   client.getRandomRarity = (rarityRate, retKey=false) => {
     let currentScore = 0 , i = 0 ;
     const number = Math.floor(Math.random() * 100) + 1;
-    console.log ("Random number:",number) ;
+    // console.log ("Random number:",number) ;
     for (let key in rarityRate) {
       currentScore+= parseInt (rarityRate [key]) ;
       i++ ;
-      console.log ("currentScore:", currentScore) ;
-      console.log ("key:", key) ;
-      console.log ("key:", i) ;
+      // console.log ("currentScore:", currentScore) ;
+      // console.log ("key:", key) ;
+      // console.log ("key:", i) ;
       if (number <= currentScore) return retKey ? key : i ;
     }
     return -1 ;
@@ -271,7 +271,7 @@ module.exports = (client) => {
   
   client.dropCharacter = async (channel, setting, givenRarity=null, givenId=null) => {
     const commandClaim = setting.commandClaim.random() ;
-    const character = givenRarity || client.getRandomRarity (setting.characterRate) ;
+    var character = givenRarity || client.getRandomRarity (setting.characterRate) ;
     const item = client.getRandomRarity (setting.itemRate) ;
     const guild_id = channel.guild.id ;
     const prefix = setting.prefix || defaultSettings.prefix ;
@@ -283,7 +283,7 @@ module.exports = (client) => {
       
     } ;
     if (givenId === null && (character === -1 || item === -1)) return channel.send ("An error occured ! Check your rate.") ;
-    if (givenId === null)
+    if (givenId === null) {
       var [rows,fields] =
         await client
               .connection
@@ -298,7 +298,8 @@ module.exports = (client) => {
                            "where A.`rarity` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.`is_available`=1 ;"
                          , [character, item]
                        ) ;
-    else 
+    }
+    else {
       var [rows,fields] =
         await client
               .connection
@@ -306,6 +307,7 @@ module.exports = (client) => {
               .execute (   "select    A.`id` as characterId \n"+
                            "        , A.`name` as characterName \n"+
                            "        , A.`image`as characterImage \n"+
+                           "        , A.`rarity`as characterRarity \n"+
                            "        , B.`id` as itemId \n"+
                            "        , B.`name` as itemName \n"+
                            "        , B.`rarity` as itemRarity \n"+
@@ -313,8 +315,12 @@ module.exports = (client) => {
                            "where A.`id` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.`is_available`=1 ;"
                          , [givenId, item]
                        ) ;
+    }
     if (!rows.length) return await channel.send ("An error occured !") ;
     const row = rows.random() ; //get one among all the possibilities
+    // need to redefine character
+    character = row ['characterRarity'] || character ;
+    // console.log ("character:", character) ;
     var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor(colors.base)
                              .setTitle(`${row.characterName} s'approche.`)
