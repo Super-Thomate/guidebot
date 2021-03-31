@@ -235,7 +235,7 @@ module.exports = (client) => {
     const number = Math.floor(Math.random() * 100) + 1;
     console.log ("Random number:",number) ;
     for (let key in rarityRate) {
-      currentScore+=rarityRate [key];
+      currentScore+= parseInt (rarityRate [key]) ;
       i++ ;
       console.log ("currentScore:", currentScore) ;
       console.log ("key:", key) ;
