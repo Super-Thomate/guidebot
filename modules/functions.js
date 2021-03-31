@@ -233,6 +233,7 @@ module.exports = (client) => {
   client.getRandomRarity = (rarityRate, retKey=false) => {
     let currentScore = 0 , i = 0 ;
     const number = Math.floor(Math.random() * 100) + 1;
+    console.log ("Random number:",number) ;
     for (let key in rarityRate) {
       currentScore+=rarityRate [key];
       i++ ;
