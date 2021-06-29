@@ -159,7 +159,7 @@ async function getInventory (client, author, currentPage, guild_id, maxPerPage =
         allFields.push ({"name": currentCharacter, "value": value}) ;
       }
       //console.log ("allFields:", allFields) ;
-      currentCharacter = row.characterName ;
+      currentCharacter = row.characterName+" "+row.characterId ;
       currentCharacterId = row.characterId ;
       value = "" ;
     }

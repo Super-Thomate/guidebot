@@ -7,6 +7,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
      */
     const settings = message.settings = client.getSettings(message.guild);
     var user = '' ;
+    action = action.toLowerCase() ;
     if (action != 'from') {
       var userJoin = args.join (' ') ;  
       user = (! userJoin) ? message.member : getUser (message, userJoin) ;  
@@ -18,13 +19,16 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     }
     const allItemRarity = ["common", "uncommon", "rare", "epic"] ;
   
-    if (action.toLowerCase() === "all" || action.toLowerCase() === "event") {
+    if (action === "all" || action === "event") {
       const table = "inventory"+(action === "event" ? "_event" : "") ;
       try {
         const guild_id = message.guild.id, owner_id = user.id ;
         const response = await client.awaitReply(message, `Are you sure you want to remove all items from **${user.displayName}** ? (Y/N)`);
+        // CREATE TABLE IF NOT EXISTS `gamelb` (`user_id` BIGINT NOT NULL, `items` INT NOT NULL, `complete` SMALLINT NOT NULL DEFAULT 0, `date_completed` DATETIME NULL, `guild_id` BIGINT NOT NULL, primary key (`user_id`, `guild_id`)) ;
         if (["y", "yes"].includes(response.toLowerCase())) {
           var [rows, fields] = await client.connection.promise().query (`delete from wanshitong.${table} where owner_id=? and guild_id=? ;`, [owner_id, guild_id]) ;
+          if (action === "all")
+            var [rowsL, fields] = await client.connection.promise().query (`update wanshitong.gamelb set items=0, complete=0, date_completed=NULL where user_id=? and guild_id=? ;`, [owner_id, guild_id]) ;
           message.reply (`remove all items from  ${user.displayName}.`) ;
         } else {
           message.reply (`remove all aborted.`) ;
@@ -35,7 +39,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
       }
     } else
   
-    if (action.toLowerCase() === "from") {
+    if (action === "from") {
       try {
         // message.reply (`should give item of rarity ${itemRarity} from character ${characterId} to ${user.displayName}.`) ;
         const guild_id = message.guild.id, owner_id = user.id ;
@@ -62,6 +66,12 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
               if (err) console.error (err) ;
               // console.log (res) ;
             }) ;
+            if (! isEvent) {
+              client.connection.query (`update wanshitong.gamelb set items=items-1, complete=0, date_completed=NULL where user_id=? and guild_id=? ;`, [owner_id, guild_id], (err, res, fields) => {
+                if (err) console.error (err) ;
+                //console.log (res) ;
+              }) ;
+            }
           }) ;
           message.reply (`remove ${itemRarity === "all" ? "all items" : "item of rarity "+itemRarity} from ${characterName} from ${user.displayName}.`) ;
         } else {
