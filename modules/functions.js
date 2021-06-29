@@ -249,6 +249,10 @@ module.exports = (client) => {
     return  ["high","regular","low","event"].indexOf (rarityName)+1 ;
   } ;
   
+  client.getItemRarityFromName = (rarityName) => {
+    return  ["common","uncommon","rare","epic"].indexOf (rarityName)+1 ;
+  } ;
+  
   client.getRarityCharacter = (rarity) => {
     return ["Haut","Régulier","Bas","Événementiel"] [rarity-1] ;
   } ;
@@ -269,10 +273,10 @@ module.exports = (client) => {
    "left": "#B20C20"
   } ;
   
-  client.dropCharacter = async (channel, setting, givenRarity=null, givenId=null) => {
+  client.dropCharacter = async (channel, setting, givenRarity=null, givenId=null, givenItemRarity=null) => {
     const commandClaim = setting.commandClaim.random() ;
     var character = givenRarity || client.getRandomRarity (setting.characterRate) ;
-    const item = client.getRandomRarity (setting.itemRate) ;
+    const item = givenItemRarity || client.getRandomRarity (setting.itemRate) ;
     const guild_id = channel.guild.id ;
     const prefix = setting.prefix || defaultSettings.prefix ;
     const filter = async (m) => {
