@@ -178,7 +178,7 @@ exports.help = {
         give rare [<user>]       => give all rare items, except events one, to user or oneself if no user is defined
         give epic [<user>]       => give all epic items, except events one, to user or oneself if no user is defined
         give from <characterId> <itemRarity> [<user>] => give item of rarity itemRarity from character characterId or all if itemRarity is 'all' to user or oneself if no user is defined
-        give role [<user>]       => set pokedex completion for user or oneself if no user is defined`
+        give role [<user>]       => give achievement role for user or oneself if no user is defined`
 };
 
 getUser = (message, userJoin) => {

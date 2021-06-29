@@ -4,6 +4,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
      * /remove all [<user>] => remove all items to user or oneself if no user is defined (add confirmation)
      * /remove event [<user>] => remove all event items to user or oneself if no user is defined (add confirmation)
      * /remove from <characterId> <itemRarity> [<user>] => remove item of rarity itemRarity from character characterId or all if itemRarity is 'all' to user or oneself if no user is defined
+     * /remove role  [<user>] => remove role for completed pokedex from user or oneself if no user is defined
      */
     const settings = message.settings = client.getSettings(message.guild);
     var user = '' ;
@@ -83,6 +84,23 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
       }
     } else
   
+    if (action === "role") {
+      try {
+        const response = await client.awaitReply(message, `Are you sure you want to remove achievement role from **${user.displayName}** ? (Y/N)`);
+        const roleComplete = settings.roleComplete ;
+        const role = message.guild.roles.cache.find (r => r.name === roleComplete) ;
+        if (["y", "yes"].includes(response.toLowerCase())) {
+          user.roles.remove(role).catch(console.error);
+          message.channel.send (`${user.displayName} was stripped from role ${role.name}.`) ;
+        } else {
+          message.reply (`remove aborted.`) ;
+        }
+      } catch (err) {
+        console.log ("err give allItems:", err) ;
+        message.reply ("an error occured !") ;
+      }
+    } else
+  
     {
       message.reply (`invalid action \`${action}\`.`) ;
     }
@@ -102,7 +120,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     usage: 
     `remove all [<user>]        => remove all items from user or oneself if no user is defined
           remove event [<user>]      => give all items from event character from user or oneself if no user is defined
-          remove from <characterId> <itemRarity> [<user>] => remove item of rarity itemRarity from character characterId or all if itemRarity is 'all' from user or oneself if no user is defined`
+          remove from <characterId> <itemRarity> [<user>] => remove item of rarity itemRarity from character characterId or all if itemRarity is 'all' from user or oneself if no user is defined
+          remove role [<user>]       => remove achievement role from user or oneself if no user is defined`
   };
   
   getUser = (message, userJoin) => {
