@@ -64,7 +64,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
             if (err) console.error (err) ;
             // console.log (res) ;
           }) ;
-          await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1, where user_id=? and guild_id=? ;", [author.id, guild_id]) ;
+          await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1 where user_id=? and guild_id=? ;", [owner_id, guild_id]) ;
         }) ;
       }) ;
       message.reply (`all items from ${action} characters given to ${user.displayName}.`) ;
@@ -85,7 +85,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
             if (err) console.error (err) ;
             // console.log (res) ;
           }) ;
-          await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1, where user_id=? and guild_id=? ;", [author.id, guild_id]) ;
+          await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1 where user_id=? and guild_id=? ;", [owner_id, guild_id]) ;
         }) ;
       }) ;
       message.reply (`all items from rarity ${action} given to ${user.displayName}.`) ;
@@ -120,7 +120,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
           if (err) console.error (err) ;
           // console.log (res) ;
         }) ;
-        await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1, where user_id=? and guild_id=? ;", [author.id, guild_id]) ;
+        await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1 where user_id=? and guild_id=? ;", [owner_id, guild_id]) ;
       }) ;
       message.reply (`give ${itemRarity === "all" ? "all items" : "item of rarity "+itemRarity} from ${characterName} to ${user.displayName}.`) ;
     } catch (err) {
