@@ -11,7 +11,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     const allCharacterRarity = ["low", "regular", "high", "event"] ;
     const allItemRarity = ["common", "uncommon", "rare", "epic"] ;
     
-    if (action === "character") {
+    if (action === "character" || action === "c") {
       try {
         var whereClause = "" ;
         var whereArgs = [] ;
@@ -32,7 +32,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
       }
     } else
 
-    if (action === "item") {
+    if (action === "item" || action === "i") {
       try {
         const guild_id = message.guild.id ;
         var whereClause = "" ;
