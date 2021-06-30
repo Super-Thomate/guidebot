@@ -22,7 +22,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         }) ;
         var [rows, fields] = await client.connection.promise().query ("select id, name, rarity from wanshitong.`character` where "+whereClause+" ;", whereArgs) ;
         rows.forEach (row => {
-          result += `* [${client.getRarityCharacter (row.rarity)} ${row.name}#${row.id}\n` ;
+          result += `* [${client.getRarityCharacter (row.rarity)}] ${row.name}#${row.id}\n` ;
         }) ;
         var searchResult = `= Search Character Result =\n${result.length ? result : "No result found !"}` ;
         message.channel.send (searchResult, {code: "asciidoc", split: { char: "\u200b" }})
