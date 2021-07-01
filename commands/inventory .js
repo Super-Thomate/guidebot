@@ -133,7 +133,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
 exports.conf = {
   enabled: true,
   guildOnly: true,
-  aliases: ["bag"],
+  aliases: ["bag", "inv", "invent"],
   permLevel: "User"
 };
 
