@@ -56,6 +56,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         message.reply ("an error occured !") ;
       }
     }
+
+    message.delete () ;
   };
   
   exports.conf = {
