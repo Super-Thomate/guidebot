@@ -274,7 +274,8 @@ module.exports = (client) => {
   } ;
   
   client.dropCharacter = async (channel, setting, givenRarity=null, givenId=null, givenItemRarity=null) => {
-    const commandClaim = setting.commandClaim.random() ;
+    // const commandClaim = setting.commandClaim.random() ;
+    commandClaim = "dummy"
     var character = givenRarity || client.getRandomRarity (setting.characterRate) ;
     const item = givenItemRarity || client.getRandomRarity (setting.itemRate) ;
     const guild_id = channel.guild.id ;
@@ -408,6 +409,7 @@ module.exports = (client) => {
   
   function isCommandClaim (content, commandClaim) {
     let isIt = false ;
+    if (content.slice(1) == "dummy") return true ;
     commandClaim.forEach (c => {
       if (content.slice(1) === c.toLowerCase())
         isIt = true ;
