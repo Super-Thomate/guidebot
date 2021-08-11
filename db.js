@@ -56,14 +56,13 @@ fs.createReadStream('wst.csv')
          //console.log (res) ;
          if (err) return console.error ("err character "+current, err) ;
          const character_id = res.insertId ;
-         /*
+         
          console.log ("itemCommon:", itemCommon)
          console.log ("itemUncommon:", itemUncommon)
          console.log ("itemRare:", itemRare)
          console.log ("itemEpic:", itemEpic)
          console.log ("character_id:", character_id)
-         console.log ("guild_id:", guild_id)
-         */
+         
          connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 1, ?) ;", [itemCommon, character_id], (err, res) => {console.error ("err common "+current, err) ;}) ;
          connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 2, ?) ;", [itemUncommon, character_id], (err, res) => {console.error ("err unco "+current, err) ;}) ;
          connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 3, ?) ;", [itemRare, character_id], (err, res) => {console.error ("err rare "+current, err) ;}) ;
