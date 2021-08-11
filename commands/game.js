@@ -52,11 +52,12 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       var [rows, fields] = await client.connection.promise().query("select A.id from `character` as A where A.serie=? ;", [serie]) ;
       if (! rows.length) return message.reply (`Serie ${serie} not found.`) ;
       await client.connection.promise().query ("START TRANSACTION;") ;
-      var select = "" ;
+      var select = "insert into \`availability\` (is_available, character_id, guild_id) values" ;
       for (let i=0; i<rows.length; i++) {
         const character = rows [i] ;
-        select += `insert into \`availability\` (is_available, character_id, guild_id) values (1,${character.id},${guild_id}) on duplicate key update is_available=1;\n` ;
+        select += `${i!=0?',':''} (1,${character.id},${guild_id})` ;
       }
+      select += " on duplicate key update is_available=1;" ;
       await client.connection.promise().execute (select) ;
       console.log ("No error detected => commit change") ;
       client.connection.execute ("COMMIT;") ;
@@ -76,11 +77,12 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       var [rows, fields] = await client.connection.promise().query("select A.id from `character` as A where A.serie=? ;", [serie]) ;
       if (! rows.length) return message.reply (`Serie ${serie} not found.`) ;
       await client.connection.promise().query ("START TRANSACTION;") ;
-      var select = "" ;
+      var select = "insert into \`availability\` (is_available, character_id, guild_id) values" ;
       for (let i=0; i<rows.length; i++) {
         const character = rows [i] ;
-        select += `insert into \`availability\` (is_available, character_id, guild_id) values (0,${character.id},${guild_id}) on duplicate key update is_available=0;\n` ;
+        select += `${i!=0?',':''} (0,${character.id},${guild_id})` ;
       }
+      select += " on duplicate key update is_available=0;" ;
       await client.connection.promise().execute (select) ;
       console.log ("No error detected => commit change") ;
       client.connection.execute ("COMMIT;") ;
