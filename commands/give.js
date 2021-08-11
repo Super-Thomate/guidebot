@@ -33,8 +33,10 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
   if (action === "all") {
     try {
       const guild_id = message.guild.id, owner_id = user.id ;      
-      var [rows, fields] = await client.connection.promise().query ("select id as characterId from wanshitong.`character` where rarity<>4 ;") ;
+      var [rows, fields] = await client.connection.promise().query (`select A.id as characterId from wanshitong.\`character\` as A, wanshitong.\`availability\` as B where A.id=B.character_id and B.is_available=1 and B.guild_id=${guild_id} and A.rarity<>4 ;`) ;
       var [rowsL,fieldsL] = await client.connection.promise().execute ("insert ignore into wanshitong.gamelb (user_id, guild_id) values (?, ?) ;", [owner_id, guild_id]) ;
+      console.log (rows) ;
+      
       rows.forEach (async (row) => {
         let [rowsI, fieldsI] = await client.connection.promise().query ("select id as itemId from wanshitong.item where character_id=? ;", [row.characterId]) ;
         rowsI.forEach (async (rowI) => {
@@ -57,7 +59,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     var table = "inventory"+(action === "event" ? "_event" : "") ;
     try {
       const guild_id = message.guild.id, owner_id = user.id ;
-      var [rows, fields] = await client.connection.promise().query ("select id as characterId from wanshitong.`character` where rarity=? ;", [client.getRarityFromName(action)]) ;
+      var [rows, fields] = await client.connection.promise().query (`select A.id as characterId from wanshitong.\`character\` as A, wanshitong.\`availability\` as B where A.id=B.character_id and B.is_available=1 and B.guild_id=${guild_id} and A.rarity=${client.getRarityFromName(action)} ;`) ;
+      var [rowsL,fieldsL] = await client.connection.promise().execute ("insert ignore into wanshitong.gamelb (user_id, guild_id, items) values (?, ?, 0) ;", [owner_id, guild_id]) ;
       rows.forEach (async (row) => {
         let [rowsI, fieldsI] = await client.connection.promise().query ("select id as itemId from wanshitong.item where character_id=? ;", [row.characterId]) ;
         rowsI.forEach (async (rowI) => {
@@ -78,7 +81,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
   if (allItemRarity.includes (action)) {
     try {
       const guild_id = message.guild.id, owner_id = user.id ;
-      var [rows, fields] = await client.connection.promise().query ("select id as characterId from wanshitong.`character` where rarity<>4 ;") ;
+      var [rows, fields] = await client.connection.promise().query (`select A.id as characterId from wanshitong.\`character\` as A, wanshitong.\`availability\` as B where A.id=B.character_id and B.is_available=1 and B.guild_id=${guild_id} and A.rarity<>4 ;`) ;
+      var [rowsL,fieldsL] = await client.connection.promise().execute ("insert ignore into wanshitong.gamelb (user_id, guild_id, items) values (?, ?, 0) ;", [owner_id, guild_id]) ;
       rows.forEach (async (row) => {
         let [rowsI, fieldsI] = await client.connection.promise().query ("select id as itemId from wanshitong.item where character_id=? and rarity=?;", [row.characterId, client.getItemRarityFromName (action)]) ;
         rowsI.forEach (async (rowI) => {
@@ -102,6 +106,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
       const guild_id = message.guild.id, owner_id = user.id ;
       var [rows, fields] = await client.connection.promise().query ("select rarity as characterRarity, name as characterName from wanshitong.`character` where id=? ;", [characterId]) ;
       if (! rows.length) return message.reply (`id ${characterId} is not a valid id !`) ;
+      var [rowsL,fieldsL] = await client.connection.promise().execute ("insert ignore into wanshitong.gamelb (user_id, guild_id, items) values (?, ?, 0) ;", [owner_id, guild_id]) ;
       rows.forEach (async (row) => {
         isEvent = (row ['characterRarity'] === 4) ;
         characterName = row ['characterName'] ;
