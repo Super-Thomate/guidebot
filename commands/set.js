@@ -100,6 +100,11 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
          || (key === "epic")
        ) {
       let itemRate = client.settings.get(message.guild.id) ["itemRate"] ;
+      if (!itemRate) {
+        console.log ("No itemRate ! Redefine !") ;
+        // console.log (defaults ['itemRate'])
+        itemRate = defaults ['itemRate'] ;
+      }
       itemRate [key] = joinedValue ;
       client.settings.set(message.guild.id, itemRate, "itemRate") ;
       let total = 0 ;
@@ -116,8 +121,8 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
       let characterRate = client.settings.get(message.guild.id) ["characterRate"] ;
       if (!characterRate) {
         console.log ("No characterRate ! Redefine !") ;
-        console.log (defaults)
-        // characterRate = client.def
+        // console.log (defaults ['characterRate'])
+        characterRate = defaults ['characterRate'] ;
       }
       characterRate [key] = joinedValue ;
       client.settings.set(message.guild.id, characterRate, "characterRate") ;
