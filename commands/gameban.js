@@ -64,5 +64,5 @@ exports.help = {
   name: "gameban",
   category: "Game Settings",
   description: "Blacklist a user so they cannot claim any item. Don't forget to unban...",
-  usage: "gameban <ban/unban/status/list> <user>"
+  usage: "gameban <ban/unban/status/list> <user> <type>"
 };
