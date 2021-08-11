@@ -7,6 +7,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
      * /spawn item characterId itemRarity => get character with id characterId with item itemRarity
      */
     const settings = message.settings = client.getSettings(message.guild);
+    client.alreadyDropped [message.guild.id] = Date.now() ;
     
     if (action === "rarity") {
       const allRarity = ["high", "regular", "low", "event"] ;
