@@ -20,7 +20,7 @@ module.exports = async client => {
   // DATABASE
   /*
   -- character
-  CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, primary key (`id`)) ;
+  CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `serie` VARCHAR(128) NOT NULL, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, primary key (`id`)) ;
   -- item
   CREATE TABLE IF NOT EXISTS `item` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR (256) NOT NULL, `rarity` INT NOT NULL, `character_id` INT NOT NULL, primary key (`id`)) ;
   -- inventory
@@ -30,7 +30,7 @@ module.exports = async client => {
   */
   //client.connection.execute ("drop table `character` ;", (err, rows) => {if (err) console.log ("err:",err) ;}) ;
   //client.connection.execute ("drop table `item` ;", (err, rows) => {if (err) console.log ("err:",err) ;}) ;
-  client.connection.execute ("CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, primary key (`id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `character` (`id` INT NOT NULL AUTO_INCREMENT, `serie` VARCHAR(128) NOT NULL, `name` VARCHAR(256) NOT NULL, `image` VARCHAR(256) NOT NULL, `rarity` INT NOT NULL, primary key (`id`)) ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   
@@ -90,14 +90,10 @@ module.exports = async client => {
   client.connection.execute ("ALTER TABLE wanshitong.`item` CHANGE name name VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
-  
-  client.connection.execute ("select count(*) as allItems from `item` as A, `character` as B where A.character_id=B.id and B.is_available=1 and B.rarity<>4 ;", (err, rows) => {
-    if (err) console.log ("err:",err) ;
-    if (rows && rows.length) {
-      const allItems = rows [0].allItems ;
-      client.maxItem = allItems ;
-    }
-  });
-  
+  // MAX ITEMS / GUILD
+  client.maxItem = [] ;
+  client.guilds.cache.each(async (guild) => {
+    await client.populateMaxItem (guild.id) ;
+  }) ;
   
 };

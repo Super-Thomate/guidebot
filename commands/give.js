@@ -14,6 +14,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
    * /give role [<user>] => set pokedex completion for user or oneself if no user is defined
    */
   const settings = message.settings = client.getSettings(message.guild);
+  const guild_id = message.guild.id ;
   var user = '' ;
   if (! action) return message.reply (`action required !`) ;
   action = action.toLowerCase() ;
@@ -41,7 +42,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         }) ;
       }) ;
       message.reply (`all items given to ${user.displayName}.`) ;
-      await client.connection.promise().query (`update wanshitong.gamelb set items=?, complete=?, date_completed=NOW() where user_id=? and guild_id=? ;`, [client.maxItem, 1, owner_id, guild_id]) ;
+      await client.connection.promise().query (`update wanshitong.gamelb set items=?, complete=?, date_completed=NOW() where user_id=? and guild_id=? ;`, [client.maxItem [guild_id], 1, owner_id, guild_id]) ;
       const roleComplete = settings.roleComplete ;
       const role = message.guild.roles.cache.find (r => r.name === roleComplete) ;
       user.roles.add(role).catch(console.error);
@@ -134,8 +135,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
       const guild_id = message.guild.id, owner_id = user.id ;
       await client.connection.promise().execute ("insert ignore into wanshitong.gamelb (user_id, guild_id) values (?, ?) ;", [owner_id, guild_id]) ;
       var [rows,fields] = await client.connection.promise().query ("select count(*) as countItem from wanshitong.inventory where owner_id=? and guild_id=? ;", [owner_id, guild_id]) ;
-      if (rows.length && rows[0].countItem === client.maxItem) {
-        await client.connection.promise().query (`update wanshitong.gamelb set items=?, complete=?, date_completed=NOW() where user_id=? and guild_id=? ;`, [client.maxItem, 1, owner_id, guild_id]) ;
+      if (rows.length && rows[0].countItem === client.maxItem [guild_id]) {
+        await client.connection.promise().query (`update wanshitong.gamelb set items=?, complete=?, date_completed=NOW() where user_id=? and guild_id=? ;`, [client.maxItem [guild_id], 1, owner_id, guild_id]) ;
         const roleComplete = settings.roleComplete ;
         const role = message.guild.roles.cache.find (r => r.name === roleComplete) ;
         user.roles.add(role).catch(console.error);

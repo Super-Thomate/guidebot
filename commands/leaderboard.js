@@ -91,7 +91,7 @@ async function getBody (client, guild, maxLength, message, page, maxPerPage) {
       guildMember = {"displayName": "NONAME", "user":{"tag": "NOTAG"}} ;
     }
     let items = `${row.items}` ;
-    let complete = row.items>=client.maxItem || row.complete;
+    let complete = row.items>=client.maxItem [guild.id] || row.complete;
     let rankStr = `${complete?"🦊️":""}${ranking}.` ;
     let newLine = ` ${" ".repeat (7-rankStr.length)}${rankStr} | ${" ".repeat (5-items.length)}${items} | ${row.user_id === message.author.id ? "Vous => ":""}${guildMember.displayName} (${guildMember.user.tag})\n` ;
     maxLength = Math.max(maxLength, newLine.length) ;

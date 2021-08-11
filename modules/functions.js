@@ -288,39 +288,27 @@ module.exports = (client) => {
     } ;
     if (givenId === null && (character === -1 || item === -1)) return channel.send ("An error occured ! Check your rate.") ;
     if (givenId === null) {
-      var [rows,fields] =
-        await client
-              .connection
-              .promise ()
-              .execute (   "select    A.`id` as characterId \n"+
-                           "        , A.`name` as characterName \n"+
-                           "        , A.`image`as characterImage \n"+
-                           "        , B.`id` as itemId \n"+
-                           "        , B.`name` as itemName \n"+
-                           "        , B.`rarity` as itemRarity \n"+
-                           " from `wanshitong`.`character` as A, `wanshitong`.`item` as B \n"+
-                           "where A.`rarity` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.`is_available`=1 ;"
-                         , [character, item]
-                       ) ;
+      var select = "select A.`id` as characterId , A.`name` as characterName , A.`image` as characterImage , B.`id` as itemId , B.`name` as itemName , B.`rarity` as itemRarity  from `character` as A, `item` as B, `availability` as C where A.id=B.character_id and A.id=C.character_id and C.is_available=1 and A.rarity="+character+" and B.rarity="+item+" and C.guild_id="+guild_id+";" ;
     }
     else {
-      var [rows,fields] =
-        await client
-              .connection
-              .promise ()
-              .execute (   "select    A.`id` as characterId \n"+
-                           "        , A.`name` as characterName \n"+
-                           "        , A.`image`as characterImage \n"+
-                           "        , A.`rarity`as characterRarity \n"+
-                           "        , B.`id` as itemId \n"+
-                           "        , B.`name` as itemName \n"+
-                           "        , B.`rarity` as itemRarity \n"+
-                           " from `wanshitong`.`character` as A, `wanshitong`.`item` as B \n"+
-                           "where A.`id` = ? and B.`character_id` = A.`id` and B.`rarity` = ? AND A.`is_available`=1 ;"
-                         , [givenId, item]
-                       ) ;
+      var select = "select A.`id` as characterId , A.`name` as characterName , A.`image` as characterImage , B.`id` as itemId , B.`name` as itemName , B.`rarity` as itemRarity  from `character` as A, `item` as B, `availability` as C where A.id="+givenId+" and A.id=B.character_id and A.id=C.character_id and C.is_available=1 and B.rarity="+item+" and C.guild_id="+guild_id+";" ;
     }
-    if (!rows.length) return await channel.send ("An error occured !") ;
+    var [rows,fields] =
+      await client
+            .connection
+            .promise ()
+            .execute (select) ;
+    /*
+    console.log ("select", select) ;
+    console.log ("guild_id", guild_id) ;
+    console.log ("givenId", givenId) ;
+    console.log ("character", character) ;
+    console.log ("item", item) ;
+    */
+    if (!rows.length) {
+      console.error ("Error on dropCharacter get a character => rows = []")
+      return await channel.send ("An error occured !") ;
+    }
     const row = rows.random() ; //get one among all the possibilities
     // need to redefine character
     character = row ['characterRarity'] || character ;
@@ -356,7 +344,7 @@ module.exports = (client) => {
         if (character !== 4) {
           [rows,fields] = await client.connection.promise().query ("select items from wanshitong.gamelb where user_id=? and guild_id=?;", [author.id, guild_id]) ;
           if (rows.length) {
-            const complete = (rows [0].items +1 == client.maxItem) ;
+            const complete = (rows [0].items +1 == client.maxItem [guild_id]) ;
             await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1, complete=?"+(complete?", date_completed=NOW()":"")+" where user_id=? and guild_id=? ;", [complete, author.id, guild_id]) ;
             if (complete) {
               const roleComplete = setting.roleComplete ;
@@ -368,7 +356,6 @@ module.exports = (client) => {
             await client.connection.promise().execute ("insert into wanshitong.gamelb (user_id, guild_id) values (?, ?) on duplicate key update items=items ;", [author.id, guild_id]) ;
           }
         }
-        
       }
       characterEmbed
         .setTitle (`${row.characterName} repart.`)
@@ -417,6 +404,15 @@ module.exports = (client) => {
   client.isBlackList = async (member, type) => {
     const [rows, fields] = await client.connection.promise().query ("select count(*) as ban from wanshitong.blacklist where user_id=? and guild_id=? and type=?", [member.id, member.guild.id, type]) ;
     return (rows[0].ban != 0) ;
+  }
+
+  client.populateMaxItem = async (guild_id) => {
+    client.connection.execute ("select count(*) as allItems from `item` as A, `character` as B, `availability` as C where A.character_id=B.id and C.character_id=B.id and C.is_available=1 and B.rarity<>4 and C.guild_id="+guild_id+";", (err, rows) => {
+      if (err) console.log ("err on function::populateMaxItem:",err) ;
+      if (rows && rows.length) {
+        client.maxItem [guild_id] = rows [0].allItems ;
+      }
+    });
   }
   
 };
