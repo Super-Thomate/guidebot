@@ -122,7 +122,6 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       try {
         var [rows, fields] = await client.connection.promise().query("select A.id, A.name, A.rarity from `character` as A where A.serie=? ;", [serie]) ;
         if (! rows.length) return message.reply (`Serie ${serie} not found.`) ;
-        console.log (rows) ;
         var characterEmbed = new client.Discord.MessageEmbed()
                                .setColor("#DDA624")
                                .setTitle(`Characters from ${serie}`)
@@ -136,6 +135,11 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
         message.reply (`an error occured while listing all character from ${serie}.`) ;
       }
     }
+  } else
+
+  if (action === "maxitem") {
+    // list all series or all character from a specific serie
+    message.channel.send (`For guild ${guild_id} : ${client.maxItem [guild_id]}`) ;
   } else
   
   {
