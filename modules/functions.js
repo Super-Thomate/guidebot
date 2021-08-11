@@ -331,7 +331,12 @@ module.exports = (client) => {
     } ;
     client.on ("messageDelete", handleDelete) ;
     collector.on('collect', async (collected) => {
-      if (collected.content.toLowerCase() !== `${prefix}${commandClaim.toLowerCase()}`) {
+      answer = collected.content.toLowerCase();
+      uanswer = answer.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      check = `${prefix}${commandClaim.toLowerCase()}`;
+      ucheck = check.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+
+      if (uanswer !== ucheck) {
         return collector.stop ("wrong answer") ;
       }
       // Add to inventory
@@ -396,8 +401,13 @@ module.exports = (client) => {
   function isCommandClaim (content, commandClaim) {
     let isIt = false ;
     commandClaim.forEach (c => {
-      if (content.slice(1) === c.toLowerCase())
+      answer = content.slice(1);
+      uanswer = answer.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      check = c.toLowerCase() ;
+      ucheck = check.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      if (uanswer === ucheck) {
         isIt = true ;
+      }        
     }) ;
     return isIt ;
   }
