@@ -143,7 +143,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
   } else
   
   {
-    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load].`) ;
+    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem].`) ;
   }
 };
 
@@ -157,6 +157,6 @@ exports.conf = {
 exports.help = {
   name: "game",
   category: "Game Settings",
-  description: "View or change information for a character or an item.",
-  usage: "game <editCharacter/editItem/show> <characterId/itemId>"
+  description: "View or change information for a character or an item, or load/unload a serie.",
+  usage: "game <editCharacter/editItem/show> <characterId/itemId>\ngame <load/unload/list> <serie>"
 };
