@@ -175,7 +175,7 @@ async function getInventory (client, author, currentPage, guild_id, maxPerPage =
 
 async function getInventoryEvent (client, author, currentPage, guild_id, maxPerPage = 20) {
   const limit = (currentPage-1)*maxPerPage ;
-  const [rows, fields] = await client.connection.promise().query ("select A.`id` as characterId, A.`name` as characterName , B.`name` as itemName , B.`rarity` as itemRarity from `wanshitong`.`character` as A, `wanshitong`.`item` as B, `wanshitong`.`inventory_event` as C where C.`owner_id` = ? and B.`id` = C.`item_id` and  A.`id` = B.`character_id` and C.guild_id=? order by A.name, A.id, B.rarity limit "+limit+","+maxPerPage+";", [author, guild_id]) ;
+  const [rows, fields] = await client.connection.promise().query ("select A.`serie` as serie, A.`id` as characterId, A.`name` as characterName , B.`name` as itemName , B.`rarity` as itemRarity from `wanshitong`.`character` as A, `wanshitong`.`item` as B, `wanshitong`.`inventory_event` as C where C.`owner_id` = ? and B.`id` = C.`item_id` and  A.`id` = B.`character_id` and C.guild_id=? order by A.serie, A.name, A.id, B.rarity limit "+limit+","+maxPerPage+";", [author, guild_id]) ;
   //console.log (rows) ;
   let allFields = [] ;
   let currentCharacter = "" ;
