@@ -61,6 +61,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       await client.connection.promise().execute (select) ;
       console.log ("No error detected => commit change") ;
       client.connection.execute ("COMMIT;") ;
+      message.reply (`${serie} loaded.`) ;
     } catch (err) {
       console.error ("error on game load serie", err) ;
       message.reply ("An error occured.") ;
@@ -86,6 +87,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       await client.connection.promise().execute (select) ;
       console.log ("No error detected => commit change") ;
       client.connection.execute ("COMMIT;") ;
+      message.reply (`${serie} unloaded.`) ;
     } catch (err) {
       console.error ("error on game unload serie", err) ;
       message.reply ("An error occured.") ;
