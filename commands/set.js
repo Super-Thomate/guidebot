@@ -114,6 +114,11 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
          || (key === "event")
        ) {
       let characterRate = client.settings.get(message.guild.id) ["characterRate"] ;
+      if (!characterRate) {
+        console.log ("No characterRate ! Redefine !") ;
+        console.log (defaults)
+        // characterRate = client.def
+      }
       characterRate [key] = joinedValue ;
       client.settings.set(message.guild.id, characterRate, "characterRate") ;
       let total = 0 ;
