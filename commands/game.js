@@ -139,20 +139,9 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
     // list maxItem for current guild
     message.channel.send (`For guild ${guild_id} : ${client.maxItem [guild_id]}`) ;
   } else
-  /*
-  if (action === "dummy") {
-    client.connection.execute (`update gamelb set items=0 where user_id=103907580723617792 and guild_id=${guild_id} ;`) ;
-    message.channel.send (`Set lb = 0 for Thomate ! Cheh !`) ;
-  } else
-  */
-
+  
   if (["fixlb", "fixleaderboard", "fixdummy"].includes (action)) {
     // fix leaderboard
-    /*
-    283243816448819200
-    select count(A.item_id), A.owner_id, A.guild_id from inventory as A where A.guild_id=283243816448819200 group by owner_id;
-    */
-    // 103907580723617792
     message.reply (`Updating leaderboard after error based on inventory.`) ;
     var [rows, fields] = await client.connection.promise().query(`select count(A.item_id) as count, A.owner_id, A.guild_id from inventory as A where A.guild_id=${guild_id} group by owner_id ;`) ;
     // console.log (rows) ;
