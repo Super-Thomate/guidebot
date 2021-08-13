@@ -138,12 +138,34 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
   } else
 
   if (action === "maxitem") {
-    // list all series or all character from a specific serie
+    // list maxItem for current guild
     message.channel.send (`For guild ${guild_id} : ${client.maxItem [guild_id]}`) ;
+  } else
+  /*
+  if (action === "dummy") {
+    client.connection.execute (`update gamelb set items=0 where user_id=103907580723617792 and guild_id=${guild_id} ;`) ;
+    message.channel.send (`Set lb = 0 for Thomate ! Cheh !`) ;
+  } else
+  */
+
+  if (["fixlb", "fixleaderboard", "fixdummy"].includes (action)) {
+    // fix leaderboard
+    /*
+    283243816448819200
+    select count(A.item_id), A.owner_id, A.guild_id from inventory as A where A.guild_id=283243816448819200 group by owner_id;
+    */
+    // 103907580723617792
+    message.reply (`Updating leaderboard after error based on inventory.`) ;
+    var [rows, fields] = await client.connection.promise().query(`select count(A.item_id) as count, A.owner_id, A.guild_id from inventory as A where A.guild_id=${guild_id} group by owner_id ;`) ;
+    // console.log (rows) ;
+    rows.forEach (async (row) => {
+      var complete = row.count >= client.maxItem [guild_id] ;
+      client.connection.execute (`insert into gamelb (user_id, items, complete, date_completed, guild_id) values (${row.owner_id}, ${row.count}, ${complete?1:0}, ${complete?'NOW()':'NULL'}, ${guild_id}) on duplicate key update items=${row.count} ${complete?', complete=1, date_completed=NOW()':''};`) ;
+    }) ;
   } else
   
   {
-    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem].`) ;
+    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem,fixlb].`) ;
   }
 };
 
@@ -157,6 +179,6 @@ exports.conf = {
 exports.help = {
   name: "game",
   category: "Game Settings",
-  description: "View or change information for a character or an item, or load/unload a serie.",
-  usage: "game <editCharacter/editItem/show> <characterId/itemId>\ngame <load/unload/list> <serie>"
+  description: "View or change information for a character or an item, or load/unload a serie, or show some infos about the current game.",
+  usage: "game <editCharacter/editItem/show> <characterId/itemId>\ngame <load/unload/list> <serie>\ngame fixlb\ngame maxitem"
 };
