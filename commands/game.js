@@ -1,5 +1,3 @@
-const csvParser = require("csv-parser");
-
 exports.run = async (client, message, [action, id, ...value], level) => { // eslint-disable-line no-unused-vars
   // Retrieve current guild settings (merged) and overrides only
   const settings = message.settings;
