@@ -14,7 +14,7 @@ exports.run = async (client, message, [action, type, ...user], level) => { // es
       message.reply (`${member.displayName} (${member.user.tag}) is now banned from ${type} !`) ;
     } catch (err) {
       console.log ("err ban:", err) ;
-      message.reply("an error occured.") ;
+      message.reply("an error occured on `gameban ban`.") ;
     }
   } else 
   if (action === "unban") {
@@ -23,7 +23,7 @@ exports.run = async (client, message, [action, type, ...user], level) => { // es
       message.reply (`${member.displayName} (${member.user.tag}) is now unbanned from ${type} !`)
     } catch (err) {
       console.log ("err unban:", err) ;
-      message.reply("an error occured.") ;
+      message.reply("an error occured on `gameban unban`.") ;
     }
   } else 
   if (action === "status") {
@@ -32,7 +32,7 @@ exports.run = async (client, message, [action, type, ...user], level) => { // es
       message.reply (`${member.displayName} (${member.user.tag}) is ${rows[0].total?"":"NOT "}ban from ${type} !`)
     } catch (err) {
       console.log ("err list:", err) ;
-      message.reply("an error occured.") ;
+      message.reply("an error occured on `gameban status`.") ;
     }
   } else
   if (action === "list") {
@@ -46,7 +46,7 @@ exports.run = async (client, message, [action, type, ...user], level) => { // es
       message.channel.send (`= Blacklist ${type} =\n${listBanned}`, {code: "asciidoc"}) ;
     } catch (err) {
       console.log ("err list:", err) ;
-      message.reply("an error occured.") ;
+      message.reply("an error occured on `gameban list`.") ;
     }
   } else {
     message.reply (`${action} is not a valid action: ban, unban, status or list`)
@@ -64,5 +64,9 @@ exports.help = {
   name: "gameban",
   category: "Game Settings",
   description: "Blacklist a user so they cannot claim any item. Don't forget to unban...",
-  usage: "gameban <ban/unban/status/list> <user> <type>"
+  usage: `gameban ban [game/magic] <user>    : add user to the blacklist for the game or the magic8ball (funny alias: ptdr tki)
+gameban  unban [game/magic] <user> : remove user to the blacklist for the game or the magic8ball
+gameban status [game/magic] <user> : check if user is on the blacklist for the game or the magic8ball
+gameban list [game/magic]          : list all users on the blacklist for the game or the magic8ball
+`
 };
