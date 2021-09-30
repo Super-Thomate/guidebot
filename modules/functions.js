@@ -308,7 +308,7 @@ module.exports = (client) => {
     if (!rows.length) {
       console.error ("Error on dropCharacter get a character => rows = []") ;
       console.error ("select:\n", select) ;
-      return await channel.send ("An error occured !") ;
+      return await channel.send ("Found 0 character ! Check if series is loaded !") ;
     }
     const row = rows.random() ; //get one among all the possibilities
     // need to redefine character
