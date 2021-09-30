@@ -306,7 +306,8 @@ module.exports = (client) => {
     console.log ("item", item) ;
     */
     if (!rows.length) {
-      console.error ("Error on dropCharacter get a character => rows = []")
+      console.error ("Error on dropCharacter get a character => rows = []") ;
+      console.error ("select:\n", select) ;
       return await channel.send ("An error occured !") ;
     }
     const row = rows.random() ; //get one among all the possibilities
