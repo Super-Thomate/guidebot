@@ -5,41 +5,6 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
   const guild_id = message.guild.id ;
   const overrides = client.settings.get(guild_id);
   if (!client.settings.has(guild_id)) client.settings.set(guild_id, {});
-  
-  // Edit an existing character
-  if (action === "editCharacter") {
-    // User must specify an id.
-    if (!id) return message.reply("Please specify a characterId to edit.");
-    message.reply ("Do stuff") ;
-  } else
-
-  if (action === "editItem") {
-    // User must specify an id.
-    if (!id) return message.reply("Please specify an itemId to edit.");
-    message.reply ("Do stuff") ;
-  } else
-
-  if (action === "show") {
-    if (!id) return message.reply("Please specify a characterId to show.");
-    try {
-      var [rows, fields] = await client.connection.promise().query("select A.id as characterId, A.name as characterName, A.rarity as characterRarity, A.image, B.id as itemId, B.name as itemName, B.rarity as itemRarity from `character` as A, `item` as B where A.id=B.character_id and A.id=? ;", [id]) ;
-      if (! rows.length) return message.reply (`No character with id ${id}.`) ;
-      //console.log (rows) ;
-      var characterEmbed = new client.Discord.MessageEmbed()
-                             .setColor("#DDA624")
-                             //.setTitle(`${rows [0].is_available ? ":white_check_mark:":":x:"} ${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
-                             .setTitle(`${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
-                             .setImage(rows [0].image)
-                             ;
-      rows.forEach(row => {
-        characterEmbed.addField (`${client.getRarityEmoji (row.itemRarity)} ${client.getRarityItem (row.itemRarity)}`, `#${row.itemId} ${row.itemName.upperCaseFirstLetter()}`)
-      }) ;
-      message.channel.send (characterEmbed) ;
-    } catch (err) {
-      console.error ("error on game show characterId", err) ;
-      message.reply ("error on game show characterId.") ;
-    }
-  } else
 
   if (action === "load") {
     // user must specify a serie
@@ -138,7 +103,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
     // list maxItem for current guild
     message.channel.send (`For guild ${guild_id} : ${client.maxItem [guild_id]}`) ;
   } else
-  
+
   if (["fixlb", "fixleaderboard", "fixdummy"].includes (action)) {
     // fix leaderboard
     message.reply (`Updating leaderboard after error based on inventory.`) ;
@@ -149,7 +114,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       client.connection.execute (`insert into gamelb (user_id, items, complete, date_completed, guild_id) values (${row.owner_id}, ${row.count}, ${complete?1:0}, ${complete?'NOW()':'NULL'}, ${guild_id}) on duplicate key update items=${row.count} ${complete?', complete=1, date_completed=NOW()':''};`) ;
     }) ;
   } else
-  
+
   {
     message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem,fixlb].`) ;
   }
@@ -165,6 +130,8 @@ exports.conf = {
 exports.help = {
   name: "game",
   category: "Game Settings",
-  description: "View or change information for a character or an item, or load/unload a serie, or show some infos about the current game.",
-  usage: "game <editCharacter/editItem/show> <characterId/itemId>\ngame <load/unload/list> <serie>\ngame fixlb\ngame maxitem"
+  description: "Load or unload a serie, or show some infos about the current game.",
+  usage:
+  `game load <serie>   => set all character from serie as available
+        game unload <serie>   => set all character from serie as unavailable`
 };
