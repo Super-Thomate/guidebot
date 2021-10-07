@@ -4,7 +4,7 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
   const defaults = client.settings.get("default");
   const overrides = client.settings.get(message.guild.id);
   if (!client.settings.has(message.guild.id)) client.settings.set(message.guild.id, {});
-  
+
   // Edit an existing character
   if (action === "edit") {
     // User must specify an id.
@@ -15,11 +15,12 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
       case 'dispo':
         let is_available = value.join('').toLowerCase() === "true" ? 1 : 0 ;
         try {
-         await client.connection.promise().query("update `character` set is_available=? where id=? ;", [is_available, id]) ;
-         return message.reply (`key is_available is now ${is_available}.`)
+          let query = `insert into availability (character_id, guild_id, is_available) values (${id}, ${message.guild.id}, ${is_available}) on duplicate key update is_available=${is_available}` ;
+          await client.connection.promise().execute (query) ;
+          return message.reply (`key is_available is now ${is_available}.`) ;
         } catch (err) {
           console.error ("err on edit character:", err) ;
-          return message.reply ("An error occured.")
+          return message.reply (`Error on edit available for character ${id}.`) ;
         }
       break ;
       default:
