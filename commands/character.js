@@ -1,10 +1,10 @@
 exports.run = async (client, message, [action, id, key, ...value], level) => { // eslint-disable-line no-unused-vars
   // Retrieve current guild settings (merged) and overrides only
   const settings = message.settings;
+  const guild_id = message.guild.id ;
   const defaults = client.settings.get("default");
-  const overrides = client.settings.get(message.guild.id);
-  if (!client.settings.has(message.guild.id)) client.settings.set(message.guild.id, {});
-
+  const overrides = client.settings.getguild_id);
+  if (!client.settings.has(guild_id)) client.settings.set(guild_id, {});
   // Edit an existing character
   if (action === "edit") {
     // User must specify an id.
@@ -15,8 +15,8 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
       case 'dispo':
         let is_available = value.join('').toLowerCase() === "true" ? 1 : 0 ;
         try {
-          let query = `insert into availability (character_id, guild_id, is_available) values (${id}, ${message.guild.id}, ${is_available}) on duplicate key update is_available=${is_available}` ;
-          await client.connection.promise().execute (query) ;
+          let insert = `insert into availability (character_id, guild_id, is_available) values (${id}, ${guild_id}, ${is_available}) on duplicate key update is_available=${is_available}` ;
+          await client.connection.promise().execute (insert) ;
           return message.reply (`key is_available is now ${is_available}.`) ;
         } catch (err) {
           console.error ("err on edit character:", err) ;
@@ -55,12 +55,14 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
     if (!id) return message.reply("Please specify a characterId to show.");
     try {
       var [rows, fields] = await client.connection.promise().query("select A.id as characterId, A.name as characterName, A.rarity as characterRarity, A.image, B.id as itemId, B.name as itemName, B.rarity as itemRarity from `character` as A, `item` as B where A.id=B.character_id and A.id=? ;", [id]) ;
+      var [rowsA, fieldsA] = await client.connection.promise().query("select is_available from availability where character_id=? and guild_id=? ;", [id, guild_id]) ;
       if (! rows.length) return message.reply (`No character with id ${id}.`) ;
+      let is_available = (rowsA.length && rowsA.is_available == 1) ;
       //console.log (rows) ;
       var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor("#DDA624")
-                             //.setTitle(`${rows [0].is_available ? ":white_check_mark:":":x:"} ${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
-                             .setTitle(`${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
+                             //.setTitle(`${is_available ? ":white_check_mark:":":x:"} ${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
+                             .setTitle(`${is_available ? ":white_check_mark:":":x:"} ${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
                              .setImage(rows [0].image)
                              ;
       rows.forEach(row => {
