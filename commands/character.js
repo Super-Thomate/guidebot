@@ -57,11 +57,8 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
       var [rows, fields] = await client.connection.promise().query("select A.id as characterId, A.name as characterName, A.rarity as characterRarity, A.image, B.id as itemId, B.name as itemName, B.rarity as itemRarity from `character` as A, `item` as B where A.id=B.character_id and A.id=? ;", [id]) ;
       var [rowsA, fieldsA] = await client.connection.promise().query("select is_available from availability where character_id=? and guild_id=? ;", [id, guild_id]) ;
       if (! rows.length) return message.reply (`No character with id ${id}.`) ;
-      let is_available = (rowsA.length && rowsA.is_available == 1) ;
+      let is_available = (rowsA.length && rowsA [0].is_available == 1) ;
       //console.log (rows) ;
-      console.log (rowsA) ;
-      console.log (rowsA.is_available) ;
-      console.log (is_available) ;
       var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor("#DDA624")
                              //.setTitle(`${is_available ? ":white_check_mark:":":x:"} ${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
