@@ -3,7 +3,7 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
   const settings = message.settings;
   const guild_id = message.guild.id ;
   const defaults = client.settings.get("default");
-  const overrides = client.settings.getguild_id);
+  const overrides = client.settings.get(guild_id);
   if (!client.settings.has(guild_id)) client.settings.set(guild_id, {});
   // Edit an existing character
   if (action === "edit") {
