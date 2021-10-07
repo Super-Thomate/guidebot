@@ -116,7 +116,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
   } else
 
   {
-    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem,fixlb].`) ;
+    message.reply (`${action} is not a valid action [load,unload,list,maxitem,fixlb].`) ;
   }
 };
 
@@ -132,6 +132,9 @@ exports.help = {
   category: "Game Settings",
   description: "Load or unload a serie, or show some infos about the current game.",
   usage:
-  `game load <serie>   => set all character from serie as available
-        game unload <serie>   => set all character from serie as unavailable`
+  `game load <serie>     => set all character from serie as available
+        game unload <serie>   => set all character from serie as unavailable
+        game list [<serie>]   => list all series or list all characters from serie
+        game maxitem          => maximum of item available on current guild
+        game fixlb            => fix the leaderboard if something bad happenned`
 };
