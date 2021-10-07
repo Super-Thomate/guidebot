@@ -60,6 +60,8 @@ exports.run = async (client, message, [action, id, key, ...value], level) => { /
       let is_available = (rowsA.length && rowsA.is_available == 1) ;
       //console.log (rows) ;
       console.log (rowsA) ;
+      console.log (rowsA.is_available) ;
+      console.log (is_available) ;
       var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor("#DDA624")
                              //.setTitle(`${is_available ? ":white_check_mark:":":x:"} ${rows [0].characterName} [${client.getRarityCharacter (rows[0].characterRarity)}]`)
