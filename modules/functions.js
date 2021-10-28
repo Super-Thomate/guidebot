@@ -313,6 +313,7 @@ module.exports = (client) => {
     const row = rows.random() ; //get one among all the possibilities
     // need to redefine character
     character = row ['characterRarity'] || character ;
+    console.log ("character", character) ;
     // console.log ("character:", character) ;
     var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor(colors.base)
