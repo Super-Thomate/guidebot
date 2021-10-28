@@ -298,13 +298,13 @@ module.exports = (client) => {
             .connection
             .promise ()
             .execute (select) ;
-    /** */
+    /*
     console.log ("select", select) ;
     console.log ("guild_id", guild_id) ;
     console.log ("givenId", givenId) ;
     console.log ("character", character) ;
     console.log ("item", item) ;
-    /**/
+    */
     if (!rows.length) {
       console.error ("Error on dropCharacter get a character => rows = []") ;
       console.error ("select:\n", select) ;
@@ -313,7 +313,7 @@ module.exports = (client) => {
     const row = rows.random() ; //get one among all the possibilities
     // need to redefine character
     character = row ['characterRarity'] || character ;
-    console.log ("character:", character) ;
+    // console.log ("character:", character) ;
     var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor(colors.base)
                              .setTitle(`${row.characterName} s'approche.`)
