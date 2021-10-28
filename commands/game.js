@@ -150,8 +150,19 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
     }) ;
   } else
   
+  if (["fixevent", "fixe"].includes (action)) {
+    // fix event character in classic inventory
+    message.reply (`Updating inventory and inventory_event after error based on inventory.`) ;
+    var [rows, fields] = await client.connection.promise().query(`select B.id from \`character\` as A, item as B where A.id=B.character_id and A.rarity=4 ;`) ;
+    console.log (rows) ;
+    /*rows.forEach (async (row) => {
+      var complete = row.count >= client.maxItem [guild_id] ;
+      client.connection.execute (`insert into gamelb (user_id, items, complete, date_completed, guild_id) values (${row.owner_id}, ${row.count}, ${complete?1:0}, ${complete?'NOW()':'NULL'}, ${guild_id}) on duplicate key update items=${row.count} ${complete?', complete=1, date_completed=NOW()':''};`) ;
+    }) ;*/
+  } else
+  
   {
-    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem,fixlb].`) ;
+    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem,fixlb,fixevent].`) ;
   }
 };
 
