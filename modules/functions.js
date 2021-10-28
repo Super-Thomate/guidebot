@@ -291,7 +291,7 @@ module.exports = (client) => {
       var select = "select A.`id` as characterId , A.`name` as characterName , A.`image` as characterImage , B.`id` as itemId , B.`name` as itemName , B.`rarity` as itemRarity  from `character` as A, `item` as B, `availability` as C where A.id=B.character_id and A.id=C.character_id and C.is_available=1 and A.rarity="+character+" and B.rarity="+item+" and C.guild_id="+guild_id+";" ;
     }
     else {
-      var select = "select A.`id` as characterId , A.`name` as characterName , A.`image` as characterImage , B.`id` as itemId , B.`name` as itemName , B.`rarity` as itemRarity  from `character` as A, `item` as B, `availability` as C where A.id="+givenId+" and A.id=B.character_id and A.id=C.character_id and C.is_available=1 and B.rarity="+item+" and C.guild_id="+guild_id+";" ;
+      var select = "select A.`id` as characterId , A.`name` as characterName , A.`image` as characterImage , A.`rarity` as characterRarity, B.`id` as itemId , B.`name` as itemName , B.`rarity` as itemRarity  from `character` as A, `item` as B, `availability` as C where A.id="+givenId+" and A.id=B.character_id and A.id=C.character_id and C.is_available=1 and B.rarity="+item+" and C.guild_id="+guild_id+";" ;
     }
     var [rows,fields] =
       await client
@@ -313,8 +313,7 @@ module.exports = (client) => {
     const row = rows.random() ; //get one among all the possibilities
     // need to redefine character
     character = row ['characterRarity'] || character ;
-    console.log ("character", character) ;
-    // console.log ("character:", character) ;
+    console.log ("character:", character) ;
     var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor(colors.base)
                              .setTitle(`${row.characterName} s'approche.`)
