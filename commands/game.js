@@ -154,11 +154,17 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
     // fix event character in classic inventory
     message.reply (`Updating inventory and inventory_event after error based on inventory.`) ;
     var [rows, fields] = await client.connection.promise().query(`select B.id from \`character\` as A, item as B where A.id=B.character_id and A.rarity=4 ;`) ;
-    console.log (rows) ;
-    /*rows.forEach (async (row) => {
-      var complete = row.count >= client.maxItem [guild_id] ;
-      client.connection.execute (`insert into gamelb (user_id, items, complete, date_completed, guild_id) values (${row.owner_id}, ${row.count}, ${complete?1:0}, ${complete?'NOW()':'NULL'}, ${guild_id}) on duplicate key update items=${row.count} ${complete?', complete=1, date_completed=NOW()':''};`) ;
-    }) ;*/
+    //console.log (rows.length)
+    rows.forEach (async (row) => {
+      var [rowsA, fieldsA] = await client.connection.promise().query(`select * from inventory as A where A.item_id=${row ['id']} ;`) ;
+      //console.log (rowsA) ;
+      //console.log (row['id']) ;
+      rowsA.forEach (async (rowA) => {
+        //console.log (rowA) ;
+        client.connection.execute (`delete from inventory where owner_id=${rowA ['owner_id']} and item_id=${rowA ['item_id']} and guild_id=${rowA ['guild_id']}`) ;
+        client.connection.execute (`insert into inventory_event (owner_id, item_id, guild_id) values (${rowA ['owner_id']}, ${rowA ['item_id']}, ${rowA ['guild_id']}) on duplicate key update item_id=item_id;`) ;
+      }) ;
+    }) ;
   } else
   
   {
