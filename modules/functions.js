@@ -298,13 +298,13 @@ module.exports = (client) => {
             .connection
             .promise ()
             .execute (select) ;
-    /*
+    /** */
     console.log ("select", select) ;
     console.log ("guild_id", guild_id) ;
     console.log ("givenId", givenId) ;
     console.log ("character", character) ;
     console.log ("item", item) ;
-    */
+    /**/
     if (!rows.length) {
       console.error ("Error on dropCharacter get a character => rows = []") ;
       console.error ("select:\n", select) ;
