@@ -63,10 +63,10 @@ fs.createReadStream('wst.csv')
          console.log ("itemEpic:", itemEpic)
          console.log ("character_id:", character_id)
          
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 1, ?) ;", [itemCommon, character_id], (err, res) => {console.error ("err common "+current, err) ;}) ;
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 2, ?) ;", [itemUncommon, character_id], (err, res) => {console.error ("err unco "+current, err) ;}) ;
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 3, ?) ;", [itemRare, character_id], (err, res) => {console.error ("err rare "+current, err) ;}) ;
-         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 4, ?) ;", [itemEpic, character_id], (err, res) => {console.error ("err epic "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 1, ?) ;", [itemCommon, character_id], (err, res) => {console.log ("Item insert ",itemCommon); if (err) return console.error ("err common "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 2, ?) ;", [itemUncommon, character_id], (err, res) => {console.log ("Item insert ",itemUncommon); if (err) return console.error ("err unco "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 3, ?) ;", [itemRare, character_id], (err, res) => {console.log ("Item insert ",itemRare); if (err) return console.error ("err rare "+current, err) ;}) ;
+         connection.execute ("insert into wanshitong.`item` (name, rarity, character_id) values (?, 4, ?) ;", [itemEpic, character_id], (err, res) => {console.log ("Item insert ",itemEpic); if (err) return console.error ("err epic "+current, err) ;}) ;
        }) ;
   })
   .on('end', () => {
