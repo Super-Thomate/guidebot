@@ -16,9 +16,10 @@ const mysql = require('mysql2');
 // some might call it `cootchie`. Either way, when you see `client.something`,
 // or `bot.something`, this is what we're referring to. Your client.
 const client = new Discord.Client({
-  ws: {
-    intents: config.intents
-  }
+  // ws: {
+  //   intents: config.intents
+  // },
+  intents: config.intents
 });
 
 // Here we load the config file that contains our token and our prefix values.
