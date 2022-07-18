@@ -1,3 +1,4 @@
+const config = require("../config.js");
 module.exports = async client => {
   // Log that the bot is online.
   client.logger.log(`${client.user.tag}, ready to serve ${client.users.cache.size} users in ${client.guilds.cache.size} servers.`, "ready");
@@ -5,10 +6,10 @@ module.exports = async client => {
   // This loop ensures that client.application always contains up to date data
   // about the app's status. This includes whether the bot is public or not,
   // its description, owner(s), etc. Used for the dashboard amongs other things.
-  if (client.owners.length < 1) client.application.team ? client.owners.push(...client.application.team.members.keys()) : client.owners.push(client.application.owner.id);
+  if (client.owners.length < 1) client.application.team ? client.owners.push(...client.application.team.members.keys()) : client.owners.push(config.ownerID);
   setInterval( async () => {
     client.owners = [];
-    client.application.team ? client.owners.push(...client.application.team.members.keys()) : client.owners.push(client.application.owner.id);
+    client.application.team ? client.owners.push(...client.application.team.members.keys()) : client.owners.push(config.ownerID);
   }, 60000);
 
   // Make the bot "play the game" which is the help command with default prefix.
