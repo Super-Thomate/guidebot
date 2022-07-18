@@ -50,7 +50,7 @@ module.exports = async (client, message) => {
    // client.connection.execute ("insert into wanshitong.`occurance` (message, guild_id) values (1, ?) on duplicate key update message=message+1 ;", [message.guild.id], (err, res) => {if (err) console.error ("occurrance message:", err)}) ;
    if ((drop <= settings.occuranceDrop) && (typeof client.alreadyDropped [message.guild.id] === "undefined" || client.alreadyDropped [message.guild.id] === null)) {
      client.alreadyDropped [message.guild.id] = Date.now() ;
-     console.log ("["+Date.toString()+"] Drop the charater") ;
+     console.log ("["+Date.toLocaleString()+"] Drop the charater") ;
      // client.connection.execute ("update wanshitong.`occurance` set `drop`=`drop`+1 where guild_id=? ;", [message.guild.id], (err, res) => {if (err) console.error ("occurrance drop:", err)}) ;
      try {
        const dropChannel = await message.guild.channels.cache.find(c => c.name === settings.dropChannel) ;
