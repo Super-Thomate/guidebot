@@ -20,7 +20,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     // display
     if (allFields.length) {
       characterEmbed.addFields (allFields) ;
-      let inventory = await message.channel.send (characterEmbed) ;
+      let inventory = await message.channel.send ({embeds: [characterEmbed]}) ;
       inventory.react('◀')
          .then()
          .catch(console.error);
@@ -29,7 +29,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
          .catch(console.error);
       // Create a reaction collector
       const filter = (reaction, user) => (reaction.emoji.name === '◀' || reaction.emoji.name === '▶') && !user.bot;
-      const collector = inventory.createReactionCollector(filter, { time: 60000 });
+      const collector = inventory.createReactionCollector({filter, time: 60000 });
       collector.on('collect', async (r) => {
         //console.log(`Collected ${r.emoji.name}`) ; 
         if (r.emoji.name === '◀') {
@@ -73,7 +73,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     
     if (! rows.length) {
       // No series for action
-      return message.reply (`No series found for ${action}.`) ;
+      return message.reply ({content: `No series found for ${action}.`}) ;
     }
     var [rowsC, fieldsC] = await client
                           .connection
@@ -90,7 +90,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     // display
     if (allFields.length) {
       characterEmbed.addFields (allFields) ;
-      let inventory = await message.channel.send (characterEmbed) ;
+      let inventory = await message.channel.send ({embeds: [characterEmbed]}) ;
       inventory.react('◀')
          .then()
          .catch(console.error);
@@ -99,7 +99,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
          .catch(console.error);
       // Create a reaction collector
       const filter = (reaction, user) => (reaction.emoji.name === '◀' || reaction.emoji.name === '▶') && !user.bot;
-      const collector = inventory.createReactionCollector(filter, { time: 60000 });
+      const collector = inventory.createReactionCollector({filter, time: 60000 });
       collector.on('collect', async (r) => {
         //console.log(`Collected ${r.emoji.name}`) ; 
         if (r.emoji.name === '◀') {
@@ -153,7 +153,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     // display
     if (allFields.length) {
       characterEmbed.addFields (allFields) ;
-      let inventory = await message.channel.send (characterEmbed) ;
+      let inventory = await message.channel.send ({embeds: [characterEmbed]}) ;
       inventory.react('◀')
          .then()
          .catch(console.error);
@@ -162,7 +162,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
          .catch(console.error);
       // Create a reaction collector
       const filter = (reaction, user) => (reaction.emoji.name === '◀' || reaction.emoji.name === '▶') && !user.bot;
-      const collector = inventory.createReactionCollector(filter, { time: 60000 });
+      const collector = inventory.createReactionCollector({filter, time: 60000 });
       collector.on('collect', async (r) => {
         //console.log(`Collected ${r.emoji.name}`) ; 
         if (r.emoji.name === '◀') {
@@ -198,7 +198,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
       characterEmbed.setDescription ("Inventaire vide") ;
     }
   }
-  return await message.channel.send (characterEmbed) ;
+  return await message.channel.send ({embeds: [characterEmbed]}) ;
 };
 
 exports.conf = {

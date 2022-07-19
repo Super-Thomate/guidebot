@@ -9,21 +9,21 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
   // Edit an existing character
   if (action === "editCharacter") {
     // User must specify an id.
-    if (!id) return message.reply("Please specify a characterId to edit.");
-    message.reply ("Do stuff") ;
+    if (!id) return message.reply({content: "Please specify a characterId to edit."});
+    message.reply ({content: "Do stuff"}) ;
   } else
 
   if (action === "editItem") {
     // User must specify an id.
-    if (!id) return message.reply("Please specify an itemId to edit.");
-    message.reply ("Do stuff") ;
+    if (!id) return message.reply({content: "Please specify an itemId to edit."});
+    message.reply ({content: "Do stuff"}) ;
   } else
 
   if (action === "show") {
-    if (!id) return message.reply("Please specify a characterId to show.");
+    if (!id) return message.reply({content: "Please specify a characterId to show."});
     try {
       var [rows, fields] = await client.connection.promise().query("select A.id as characterId, A.name as characterName, A.rarity as characterRarity, A.image, B.id as itemId, B.name as itemName, B.rarity as itemRarity from `character` as A, `item` as B where A.id=B.character_id and A.id=? ;", [id]) ;
-      if (! rows.length) return message.reply (`No character with id ${id}.`) ;
+      if (! rows.length) return message.reply ({content: `No character with id ${id}.`}) ;
       //console.log (rows) ;
       var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor("#DDA624")
@@ -34,20 +34,20 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       rows.forEach(row => {
         characterEmbed.addField (`${client.getRarityEmoji (row.itemRarity)} ${client.getRarityItem (row.itemRarity)}`, `#${row.itemId} ${row.itemName.upperCaseFirstLetter()}`)
       }) ;
-      message.channel.send (characterEmbed) ;
+      message.channel.send ({embeds: [characterEmbed]}) ;
     } catch (err) {
       console.error ("error on game show characterId", err) ;
-      message.reply ("error on game show characterId.") ;
+      message.reply ({content: "error on game show characterId."}) ;
     }
   } else
 
   if (action === "load") {
     // user must specify a serie
-    if (!id) return message.reply("Please specify a serie to load.");
+    if (!id) return message.reply({content: "Please specify a serie to load."});
     serie = id.toLowerCase() ;
     try {
       var [rows, fields] = await client.connection.promise().query("select A.id from `character` as A where A.serie=? ;", [serie]) ;
-      if (! rows.length) return message.reply (`Serie ${serie} not found.`) ;
+      if (! rows.length) return message.reply ({content: `Serie ${serie} not found.`}) ;
       await client.connection.promise().query ("START TRANSACTION;") ;
       var select = "insert into \`availability\` (is_available, character_id, guild_id) values" ;
       for (let i=0; i<rows.length; i++) {
@@ -58,10 +58,10 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       await client.connection.promise().execute (select) ;
       console.log ("No error detected => commit change") ;
       client.connection.execute ("COMMIT;") ;
-      message.reply (`${serie} loaded.`) ;
+      message.reply ({content: `${serie} loaded.`}) ;
     } catch (err) {
       console.error ("error on game load serie", err) ;
-      message.reply ("Error on `game load serie`.") ;
+      message.reply ({content: "Error on `game load serie`."}) ;
       console.log ("Error detected => rollback change") ;
       client.connection.execute ("ROLLBACK;") ;
     }
@@ -69,11 +69,11 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
 
   if (action === "unload") {
     // user must specify a serie
-    if (!id) return message.reply("Please specify a serie to unload.");
+    if (!id) return message.reply({content: "Please specify a serie to unload."});
     serie = id.toLowerCase() ;
     try {
       var [rows, fields] = await client.connection.promise().query("select A.id from `character` as A where A.serie=? ;", [serie]) ;
-      if (! rows.length) return message.reply (`Serie ${serie} not found.`) ;
+      if (! rows.length) return message.reply ({content: `Serie ${serie} not found.`}) ;
       await client.connection.promise().query ("START TRANSACTION;") ;
       var select = "insert into \`availability\` (is_available, character_id, guild_id) values" ;
       for (let i=0; i<rows.length; i++) {
@@ -84,10 +84,10 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       await client.connection.promise().execute (select) ;
       console.log ("No error detected => commit change") ;
       client.connection.execute ("COMMIT;") ;
-      message.reply (`${serie} unloaded.`) ;
+      message.reply ({content: `${serie} unloaded.`}) ;
     } catch (err) {
       console.error ("error on game unload serie", err) ;
-      message.reply ("Error on `game unload serie`.") ;
+      message.reply ({content: "Error on `game unload serie`."}) ;
       console.log ("Error detected => rollback change") ;
       client.connection.execute ("ROLLBACK;") ;
     }
@@ -99,7 +99,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
       // list all series
       try {
         var [rows, fields] = await client.connection.promise().query("select distinct A.serie from `character` as A ;") ;
-        if (! rows.length) return message.reply (`No serie found O.o.`) ;
+        if (! rows.length) return message.reply ({content: `No serie found O.o.`}) ;
         //console.log (rows) ;
         var characterEmbed = new client.Discord.MessageEmbed()
                                .setColor("#DDA624")
@@ -108,17 +108,17 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
         rows.forEach(row => {
           characterEmbed.setDescription ((characterEmbed.description ? characterEmbed.description : '')+`**${row.serie}**\n`)
         }) ;
-        message.channel.send (characterEmbed) ;
+        message.channel.send ({embeds: [characterEmbed]}) ;
       } catch (err) {
         console.error ("error on game list serie", err) ;
-        message.reply (`an error occured while listing all character from ${serie}.`) ;
+        message.reply ({content: `an error occured while listing all character from ${serie}.`}) ;
       }
     } else {
       // list all character from serie
       serie = id.toLowerCase() ;
       try {
         var [rows, fields] = await client.connection.promise().query("select A.id, A.name, A.rarity from `character` as A where A.serie=? ;", [serie]) ;
-        if (! rows.length) return message.reply (`Serie ${serie} not found.`) ;
+        if (! rows.length) return message.reply ({content: `Serie ${serie} not found.`}) ;
         var characterEmbed = new client.Discord.MessageEmbed()
                                .setColor("#DDA624")
                                .setTitle(`Characters from ${serie}`)
@@ -126,22 +126,22 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
         rows.forEach(row => {
           characterEmbed.setDescription ((characterEmbed.description ? characterEmbed.description : '')+`#${row.id} **${row.name}** [${client.getRarityCharacter (row.rarity)}]\n`)
         }) ;
-        message.channel.send (characterEmbed) ;
+        message.channel.send ({embeds: [characterEmbed]}) ;
       } catch (err) {
         console.error ("error on game list serie", err) ;
-        message.reply (`an error occured while listing all character from ${serie}.`) ;
+        message.reply ({content: `an error occured while listing all character from ${serie}.`}) ;
       }
     }
   } else
 
   if (action === "maxitem") {
     // list maxItem for current guild
-    message.channel.send (`For guild ${guild_id} : ${client.maxItem [guild_id]}`) ;
+    message.channel.send ({content: `For guild ${guild_id} : ${client.maxItem [guild_id]}`}) ;
   } else
   
   if (["fixlb", "fixleaderboard", "fixdummy"].includes (action)) {
     // fix leaderboard
-    message.reply (`Updating leaderboard after error based on inventory.`) ;
+    message.reply ({content: `Updating leaderboard after error based on inventory.`}) ;
     var [rows, fields] = await client.connection.promise().query(`select count(A.item_id) as count, A.owner_id, A.guild_id from inventory as A where A.guild_id=${guild_id} group by owner_id ;`) ;
     // console.log (rows) ;
     rows.forEach (async (row) => {
@@ -152,7 +152,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
   
   if (["fixevent", "fixe"].includes (action)) {
     // fix event character in classic inventory
-    message.reply (`Updating inventory and inventory_event after error based on inventory.`) ;
+    message.reply ({content: `Updating inventory and inventory_event after error based on inventory.`}) ;
     var [rows, fields] = await client.connection.promise().query(`select B.id from \`character\` as A, item as B where A.id=B.character_id and A.rarity=4 ;`) ;
     //console.log (rows.length)
     rows.forEach (async (row) => {
@@ -168,7 +168,7 @@ exports.run = async (client, message, [action, id, ...value], level) => { // esl
   } else
   
   {
-    message.reply (`${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem,fixlb,fixevent].`) ;
+    message.reply ({content: `${action} is not a valid action [editCharacter,editItem,show,load,unload,list,maxitem,fixlb,fixevent].`}) ;
   }
 };
 

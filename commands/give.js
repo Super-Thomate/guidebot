@@ -16,7 +16,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
   const settings = message.settings = client.getSettings(message.guild);
   const guild_id = message.guild.id ;
   var user = '' ;
-  if (! action) return message.reply (`action required !`) ;
+  if (! action) return message.reply ({content: `action required !`}) ;
   action = action.toLowerCase() ;
   if (action != 'from') {
     var userJoin = args.join (' ') ;  
@@ -43,15 +43,15 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
           let [res, fieldsA] = await client.connection.promise().execute ("insert ignore into wanshitong.inventory (owner_id, item_id, guild_id) values (?, ?, ?)  ;", [owner_id, rowI.itemId, guild_id]) ;
         }) ;
       }) ;
-      message.reply (`all items given to ${user.displayName}.`) ;
+      message.reply ({content: `all items given to ${user.displayName}.`}) ;
       await client.connection.promise().query (`update wanshitong.gamelb set items=?, complete=?, date_completed=NOW() where user_id=? and guild_id=? ;`, [client.maxItem [guild_id], 1, owner_id, guild_id]) ;
       const roleComplete = settings.roleComplete ;
       const role = message.guild.roles.cache.find (r => r.name === roleComplete) ;
       user.roles.add(role).catch(console.error);
-      message.channel.send (`Félicitations **${user.displayName}** ! Ta persévérance dans la quête des nombreux artéfacts t'octroie le privilège d'intégrer les rangs de mes serviles ${role.toString()}.`) ;
+      message.channel.send ({content: `Félicitations **${user.displayName}** ! Ta persévérance dans la quête des nombreux artéfacts t'octroie le privilège d'intégrer les rangs de mes serviles ${role.toString()}.`}) ;
     } catch (err) {
       console.log ("err give all:", err) ;
-      message.reply ("an error occured !") ;
+      message.reply ({content: "an error occured !"}) ;
     }
   } else
 
@@ -71,10 +71,10 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
           await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1 where user_id=? and guild_id=? ;", [owner_id, guild_id]) ;
         }) ;
       }) ;
-      message.reply (`all items from ${action} characters given to ${user.displayName}.`) ;
+      message.reply ({content: `all items from ${action} characters given to ${user.displayName}.`}) ;
     } catch (err) {
       console.log ("err give allItems:", err) ;
-      message.reply ("an error occured !") ;
+      message.reply ({content: "an error occured !"}) ;
     }
   } else
 
@@ -93,19 +93,19 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
           await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1 where user_id=? and guild_id=? ;", [owner_id, guild_id]) ;
         }) ;
       }) ;
-      message.reply (`all items from rarity ${action} given to ${user.displayName}.`) ;
+      message.reply ({content: `all items from rarity ${action} given to ${user.displayName}.`}) ;
     } catch (err) {
       console.log ("err give allItems:", err) ;
-      message.reply ("an error occured !") ;
+      message.reply ({content: "an error occured !"}) ;
     }
   } else
 
   if (action === "from") {
     try {
-      // message.reply (`should give item of rarity ${itemRarity} from character ${characterId} to ${user.displayName}.`) ;
+      // message.reply ({content: `should give item of rarity ${itemRarity} from character ${characterId} to ${user.displayName}.`}) ;
       const guild_id = message.guild.id, owner_id = user.id ;
       var [rows, fields] = await client.connection.promise().query ("select rarity as characterRarity, name as characterName from wanshitong.`character` where id=? ;", [characterId]) ;
-      if (! rows.length) return message.reply (`id ${characterId} is not a valid id !`) ;
+      if (! rows.length) return message.reply ({content: `id ${characterId} is not a valid id !`}) ;
       var [rowsL,fieldsL] = await client.connection.promise().execute ("insert ignore into wanshitong.gamelb (user_id, guild_id, items) values (?, ?, 0) ;", [owner_id, guild_id]) ;
       rows.forEach (async (row) => {
         isEvent = (row ['characterRarity'] === 4) ;
@@ -118,7 +118,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         [rowsI, fieldsI] = await client.connection.promise().query ("select id as itemId from wanshitong.item where character_id=? ;", [characterId]) ;
       } else 
       {
-        return message.reply (`rarity ${itemRarity} is not valid !`) ;
+        return message.reply ({content: `rarity ${itemRarity} is not valid !`}) ;
       }
       const table = `inventory${(isEvent ? "_event" : "")}` ;
       rowsI.forEach (async (rowI) => {
@@ -128,10 +128,10 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         }) ;
         await client.connection.promise().execute ("update wanshitong.gamelb set items=items+1 where user_id=? and guild_id=? ;", [owner_id, guild_id]) ;
       }) ;
-      message.reply (`give ${itemRarity === "all" ? "all items" : "item of rarity "+itemRarity} from ${characterName} to ${user.displayName}.`) ;
+      message.reply ({content: `give ${itemRarity === "all" ? "all items" : "item of rarity "+itemRarity} from ${characterName} to ${user.displayName}.`}) ;
     } catch (err) {
       console.log ("err give allItems:", err) ;
-      message.reply ("an error occured !") ;
+      message.reply ({content: "an error occured !"}) ;
     }
   } else
 
@@ -145,20 +145,19 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         const roleComplete = settings.roleComplete ;
         const role = message.guild.roles.cache.find (r => r.name === roleComplete) ;
         user.roles.add(role).catch(console.error);
-        message.channel.send (`Félicitations **${user.displayName}** ! Ta persévérance dans la quête des nombreux artéfacts t'octroie le privilège d'intégrer les rangs de mes serviles ${role.toString()}.`) ;
+        message.channel.send ({content: `Félicitations **${user.displayName}** ! Ta persévérance dans la quête des nombreux artéfacts t'octroie le privilège d'intégrer les rangs de mes serviles ${role.toString()}.`}) ;
       } else
       {
-        message.reply (`${user.displayName} does not own all the items. Use \`${settings.prefix}give all ${user.displayName}\`.`) ;
+        message.reply ({content: `${user.displayName} does not own all the items. Use \`${settings.prefix}give all ${user.displayName}\`.`}) ;
       }
       
     } catch (err) {
       console.log ("err give allItems:", err) ;
-      message.reply ("an error occured !") ;
+      message.reply ({content: "an error occured !"}) ;
     }
   } else
-
   {
-    message.reply (`invalid action \`${action}\`.`) ;
+    message.reply ({content: `invalid action \`${action}\`.`}) ;
   }
 };
 

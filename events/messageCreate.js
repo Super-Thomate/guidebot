@@ -14,7 +14,7 @@ module.exports = async (client, message) => {
   // Checks if the bot was mentioned, with no message after it, returns the prefix.
   const prefixMention = new RegExp(`^<@!?${client.user.id}>( |)$`);
   if (message.content.match(prefixMention)) {
-    return message.reply(`My prefix on this guild is \`${settings.prefix}\``);
+    return message.reply({content: `My prefix on this guild is \`${settings.prefix}\``});
   }
 
   // console.log ("message.content: ", message.content) ;
@@ -40,7 +40,7 @@ module.exports = async (client, message) => {
                      "N'y compte pas",
                      "Impossible"
                    ] ;
-   message.reply (answer.random()+".") ;
+   message.reply ({content: answer.random()+"."}) ;
   }
   
   // Here we will handle the trigger for character spawn

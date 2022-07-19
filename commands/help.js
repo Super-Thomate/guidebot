@@ -6,6 +6,8 @@ a command, it is not shown to them. If a command name is given with the
 help command, its extended help is shown.
 */
 
+const { Formatters } = require("discord.js");
+
 exports.run = (client, message, args, level) => {
   // If no specific command is called, show all filtered commands.
   if (!args[0]) {
@@ -28,14 +30,14 @@ exports.run = (client, message, args, level) => {
       }
       output += `${message.settings.prefix}${c.help.name}${" ".repeat(longest - c.help.name.length)} :: ${c.help.description}\n`;
     });
-    message.channel.send(output, {code: "asciidoc", split: { char: "\u200b" }});
+    message.channel.send({content: Formatters.codeBlock("asciidoc", output)});
   } else {
     // Show individual command's help.
     let command = args[0];
     if (client.commands.has(command)) {
       command = client.commands.get(command);
       if (level < client.levelCache[command.conf.permLevel]) return;
-      message.channel.send(`= ${command.help.name} = \n${command.help.description}\nusage:: ${command.help.usage}\naliases:: ${command.conf.aliases.join(", ")}\n= ${command.help.name} =`, {code:"asciidoc"});
+      message.channel.send({content: Formatters.codeBlock("asciidoc", `= ${command.help.name} = \n${command.help.description}\nusage:: ${command.help.usage}\naliases:: ${command.conf.aliases.join(", ")}\n= ${command.help.name} =`)});
     }
   }
 };

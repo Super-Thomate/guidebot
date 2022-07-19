@@ -7,7 +7,7 @@ exports.run = (client, message, args) => {
   snekfetch
     .get("https://api.thecatapi.com/v1/images/search?api_key=41803418-dd31-45a3-b5c0-96cc3c7d14d5")
     .then ((response) => {
-      message.channel.send(response.body [0].url).catch(console.error);
+      message.channel.send({content: response.body [0].url}).catch(console.error);
       //console.log (response.body [0])
     })
     .catch(console.error);

@@ -12,13 +12,13 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     if (action === "rarity") {
       const allRarity = ["high", "regular", "low", "event"] ;
       const rarity = args [0].toLowerCase() ;
-      if (! rarity) return message.reply('specify a rarity.') ;
-      if (! allRarity.includes (rarity)) return message.reply(`${rarity} is not valid: use ${allRarity}.`) ;
+      if (! rarity) return message.reply({content: 'specify a rarity.'}) ;
+      if (! allRarity.includes (rarity)) return message.reply({content: `${rarity} is not valid: use ${allRarity}.`}) ;
       try {
         client.dropCharacter (message.channel, message.settings, client.getRarityFromName (rarity)) ;
       } catch (err) {
         console.log ("err spawn rarity:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else 
     
@@ -26,25 +26,25 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
       const id = args [0] ;
       const allRarity = ["common", "uncommon", "rare", "epic"] ;
       const itemRarity = args [1].toLowerCase() ;
-      if (!id) return message.reply ('specify an id.') ;
-      if (! itemRarity) return message.reply('specify a rarity.') ;
-      if (! allRarity.includes (itemRarity)) return message.reply(`${itemRarity} is not valid: use ${allRarity}.`) ;
+      if (!id) return message.reply ({content: 'specify an id.'}) ;
+      if (! itemRarity) return message.reply({content: 'specify a rarity.'}) ;
+      if (! allRarity.includes (itemRarity)) return message.reply({content: `${itemRarity} is not valid: use ${allRarity}.`}) ;
       try {
         client.dropCharacter (message.channel, message.settings, null, id, client.getItemRarityFromName (itemRarity)) ;
       } catch (err) {
         console.log ("err spawn item:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else 
     
     if (action === "id") {
       const id = args.join (' ').toLowerCase() ;
-      if (!id) return message.reply ('specify an id.') ;
+      if (!id) return message.reply ({content: 'specify an id.'}) ;
       try {
         client.dropCharacter (message.channel, message.settings, null, id) ;
       } catch (err) {
         console.log ("err spawn id:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else 
     
@@ -54,7 +54,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         await client.dropCharacter (message.channel, settings) ;
       } catch (err) {
         console.log ("err spawn:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     }
 

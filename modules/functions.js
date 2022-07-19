@@ -78,14 +78,14 @@ module.exports = (client) => {
   USAGE
 
   const response = await client.awaitReply(msg, "Favourite Color?");
-  msg.reply(`Oh, I really love ${response} too!`);
+  msg.reply({content: `Oh, I really love ${response} too!`});
 
   */
   client.awaitReply = async (msg, question, limit = 60000) => {
     const filter = m => m.author.id === msg.author.id;
-    await msg.channel.send(question);
+    await msg.channel.send({content: question});
     try {
-      const collected = await msg.channel.awaitMessages(filter, { max: 1, time: limit, errors: ["time"] });
+      const collected = await msg.channel.awaitMessages({filter, max: 1, time: limit, errors: ["time"] });
       return collected.first().content;
     } catch (e) {
       return false;
@@ -286,7 +286,7 @@ module.exports = (client) => {
              ) ;
       
     } ;
-    if (givenId === null && (character === -1 || item === -1)) return channel.send ("An error occured ! Check your rate.") ;
+    if (givenId === null && (character === -1 || item === -1)) return channel.send ({content: "An error occured ! Check your rate."}) ;
     if (givenId === null) {
       var select = "select A.`id` as characterId , A.`name` as characterName , A.`image` as characterImage , B.`id` as itemId , B.`name` as itemName , B.`rarity` as itemRarity  from `character` as A, `item` as B, `availability` as C where A.id=B.character_id and A.id=C.character_id and C.is_available=1 and A.rarity="+character+" and B.rarity="+item+" and C.guild_id="+guild_id+";" ;
     }
@@ -308,7 +308,7 @@ module.exports = (client) => {
     if (!rows.length) {
       console.error ("Error on dropCharacter get a character => rows = []") ;
       console.error ("select:\n", select) ;
-      return await channel.send ("Found 0 character ! Check if series is loaded !") ;
+      return await channel.send ({content: "Found 0 character ! Check if series is loaded !"}) ;
     }
     const row = rows.random() ; //get one among all the possibilities
     // need to redefine character
@@ -320,9 +320,9 @@ module.exports = (client) => {
                              .setDescription(`${row.characterName} souhaite vous offrir quelque chose.\nTapez \`${prefix}${commandClaim}\` pour le récupérer.`)
                              .setImage(row.characterImage)
                              ;
-    const msgEmbed = await channel.send (characterEmbed) ;
+    const msgEmbed = await channel.send ({embeds: [characterEmbed]}) ;
     let already = false ;
-    const collector = channel.createMessageCollector(filter,  {max:1, time: setting.claimTime, errors: ["time"]});
+    const collector = channel.createMessageCollector({filter, max:1, time: setting.claimTime, errors: ["time"]});
     const handleDelete = (msg) => {
       if (msg.id === msgEmbed.id) {
         console.log ("Something deleted the character") ;
@@ -356,7 +356,7 @@ module.exports = (client) => {
               const roleComplete = setting.roleComplete ;
               const role = channel.guild.roles.cache.find (r => r.name === roleComplete) ;
               collected.member.roles.add(role).catch(console.error);
-              channel.send (`Félicitations **${collected.member.displayName}** ! Ta persévérance dans la quête des nombreux artéfacts t'octroie le privilège d'intégrer les rangs de mes serviles ${role.toString()}.`) ;
+              channel.send ({content: `Félicitations **${collected.member.displayName}** ! Ta persévérance dans la quête des nombreux artéfacts t'octroie le privilège d'intégrer les rangs de mes serviles ${role.toString()}.`}) ;
             }
           } else {
             await client.connection.promise().execute ("insert into wanshitong.gamelb (user_id, guild_id) values (?, ?) on duplicate key update items=items ;", [author.id, guild_id]) ;

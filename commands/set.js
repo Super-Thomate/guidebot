@@ -1,6 +1,8 @@
 // This command is to modify/edit guild configuration. Perm Level 3 for admins
 // and owners only. Used for changing prefixes and role names and such.
 
+const { Formatters } = require("discord.js");
+
 // Note that there's no "checks" in this basic version - no config "types" like
 // Role, String, Int, etc... It's basic, to be extended with your deft hands!
 
@@ -21,14 +23,14 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
   // Edit an existing key value
   if (action === "edit") {
     // User must specify a key.
-    if (!key) return message.reply("Please specify a key to edit");
+    if (!key) return message.reply({content: "Please specify a key to edit"});
     // User must specify a key that actually exists!
-    if (!defaults[key]) return message.reply("This key does not exist in the settings");
+    if (!defaults[key]) return message.reply({content: "This key does not exist in the settings"});
     const joinedValue = value.join(" ");
     // User must specify a value to change.
-    if (joinedValue.length < 1) return message.reply("Please specify a new value");
+    if (joinedValue.length < 1) return message.reply({content: "Please specify a new value"});
     // User must specify a different value than the current one.
-    if (joinedValue === settings[key]) return message.reply("This setting already has that value!");
+    if (joinedValue === settings[key]) return message.reply({content: "This setting already has that value!"});
     
     // If the guild does not have any overrides, initialize it.
     if (!client.settings.has(message.guild.id)) client.settings.set(message.guild.id, {});
@@ -37,14 +39,14 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     client.settings.set(message.guild.id, joinedValue, key);
 
     // Confirm everything is fine!
-    message.reply(`${key} successfully edited to ${joinedValue}`);
+    message.reply({content: `${key} successfully edited to ${joinedValue}`});
   } else
   
   // Resets a key to the default value
   if (action === "del" || action === "reset") {
-    if (!key) return message.reply("Please specify a key to reset.");
-    if (!defaults[key]) return message.reply("This key does not exist in the settings");
-    if (!overrides[key]) return message.reply("This key does not have an override and is already using defaults.");
+    if (!key) return message.reply({content: "Please specify a key to reset."});
+    if (!defaults[key]) return message.reply({content: "This key does not exist in the settings"});
+    if (!overrides[key]) return message.reply({content: "This key does not have an override and is already using defaults."});
     
     // Good demonstration of the custom awaitReply method in `./modules/functions.js` !
     const response = await client.awaitReply(message, `Are you sure you want to reset ${key} to the default value?`);
@@ -53,46 +55,46 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     if (["y", "yes"].includes(response.toLowerCase())) {
       // We delete the `key` here.
       client.settings.delete(message.guild.id, key);
-      message.reply(`${key} was successfully reset to default.`);
+      message.reply({content: `${key} was successfully reset to default.`});
     } else
     // If they respond with n or no, we inform them that the action has been cancelled.
     if (["n","no","cancel"].includes(response)) {
-      message.reply(`Your setting for \`${key}\` remains at \`${settings[key]}\``);
+      message.reply({content: `Your setting for \`${key}\` remains at \`${settings[key]}\``});
     }
   } else
   
   if (action === "addvalue") {
-    if (!key) return message.reply("Please specify a key to add value to.");
-    if (!defaults[key]) return message.reply("This key does not exist in the settings");
+    if (!key) return message.reply({content: "Please specify a key to add value to."});
+    if (!defaults[key]) return message.reply({content: "This key does not exist in the settings"});
     if (!overrides[key]) overrides[key] = defaults[key] ; // workaround
-    if (! Array.isArray (overrides[key])) return message.reply("This key does not have multiple values.");
+    if (! Array.isArray (overrides[key])) return message.reply({content: "This key does not have multiple values."});
     let oldArray = overrides [key] ;
     const joinedValue = value.join(" ");
     oldArray.push (joinedValue) ;
     client.settings.set(message.guild.id, oldArray, key) ;
     //console.log (client.settings.get(message.guild.id) [key]) ;
-    message.reply (`${joinedValue} successfully added to ${key}`) ;
+    message.reply ({content: `${joinedValue} successfully added to ${key}`}) ;
   } else
   
   if (action === "delvalue") {
-    if (!key) return message.reply("Please specify a key to delete value to.");
-    if (!defaults[key]) return message.reply("This key does not exist in the settings");
+    if (!key) return message.reply({content: "Please specify a key to delete value to."});
+    if (!defaults[key]) return message.reply({content: "This key does not exist in the settings"});
     if (!overrides[key]) overrides[key] = defaults[key] ; // workaround
-    if (! Array.isArray (overrides[key])) return message.reply("This key does not have multiple values.");
+    if (! Array.isArray (overrides[key])) return message.reply({content: "This key does not have multiple values."});
     let oldArray = overrides [key] ;
     const joinedValue = value.join(" ");
     oldArray.removeItem (joinedValue) ;
     client.settings.set(message.guild.id, oldArray, key) ;
     // console.log (client.settings.get(message.guild.id) [key]) ;
-    message.reply (`${joinedValue} successfully deleted from ${key}`) ;
+    message.reply ({content: `${joinedValue} successfully deleted from ${key}`}) ;
   } else
   
   if (action === "rate") {
-    if (!key) return message.reply("Please specify a rate to edit.");
-    //if (!defaults[key]) return message.reply("This rate does not exist in the settings");
-    //if (!overrides[key]) return message.reply("This rate does not have an override and is using defaults.");
+    if (!key) return message.reply({content: "Please specify a rate to edit."});
+    //if (!defaults[key]) return message.reply({content: "This rate does not exist in the settings"});
+    //if (!overrides[key]) return message.reply({content: "This rate does not have an override and is using defaults."});
     const joinedValue = value.join(" ");
-    if (Number.isNaN (joinedValue)) return message.reply (`Value ${joinedValue} for rate is not a number.`) ;
+    if (Number.isNaN (joinedValue)) return message.reply ({content: `Value ${joinedValue} for rate is not a number.`}) ;
     let oldValue = null ;
     if (    (key === "common")
          || (key === "uncommon")
@@ -111,7 +113,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
       for (let key in itemRate) {
         total+= Number.parseInt (itemRate [key]);
       }
-      if (total !== 100) message.reply (`The total value for itemRate is ${total}%, it may produce unexpected result !`) ;
+      if (total !== 100) message.reply ({content: `The total value for itemRate is ${total}%, it may produce unexpected result !`}) ;
     } else
     if (    (key === "high")
          || (key === "regular")
@@ -130,20 +132,20 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
       for (let key in characterRate) {
         total+= Number.parseInt (characterRate [key]);
       }
-      if (total !== 100) message.reply (`The total value for characterRate is ${total}%, it may produce unexpected result !`) ;
+      if (total !== 100) message.reply ({content: `The total value for characterRate is ${total}%, it may produce unexpected result !`}) ;
     } else {
-      return message.reply(`${key} is not a valid value.`) ;
+      return message.reply({content: `${key} is not a valid value.`}) ;
     }
     // client.settings.set(message.guild.id, oldArray, key) ;
     // console.log (client.settings.get(message.guild.id) [key]) ;
-    message.reply (`${key} successfully set to ${joinedValue}`) ;
+    message.reply ({content: `${key} successfully set to ${joinedValue}`}) ;
   } else
   
   if (action === "get") {
-    if (!key) return message.reply("Please specify a key to view");
-    if (!defaults[key]) return message.reply("This key does not exist in the settings");
+    if (!key) return message.reply({content: "Please specify a key to view"});
+    if (!defaults[key]) return message.reply({content: "This key does not exist in the settings"});
     const isDefault = !overrides[key] ? "\nThis is the default global default value." : "";
-    message.reply(`The value of ${key} is currently ${settings[key]}${isDefault}`);
+    message.reply({content: `The value of ${key} is currently ${settings[key]}${isDefault}`});
   } else {
     // Otherwise, the default action is to return the whole configuration;
     const array = [];
@@ -151,7 +153,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
       if (typeof value === "object" && !Array.isArray (value)) value = JSON.stringify(value);
       array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`); 
     });
-    await message.channel.send(`= Current Guild Settings =\n${array.join("\n")}`, {code: "asciidoc"});
+    await message.channel.send({content: Formatters.codeBlock("asciidoc", `= Current Guild Settings =\n${array.join("\n")}`)});
   }
 };
 

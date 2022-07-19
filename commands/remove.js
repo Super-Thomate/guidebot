@@ -30,22 +30,22 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
           var [rows, fields] = await client.connection.promise().query (`delete from wanshitong.${table} where owner_id=? and guild_id=? ;`, [owner_id, guild_id]) ;
           if (action === "all")
             var [rowsL, fields] = await client.connection.promise().query (`update wanshitong.gamelb set items=0, complete=0, date_completed=NULL where user_id=? and guild_id=? ;`, [owner_id, guild_id]) ;
-          message.reply (`remove all items from  ${user.displayName}.`) ;
+          message.reply ({content: `remove all items from  ${user.displayName}.`}) ;
         } else {
-          message.reply (`remove all aborted.`) ;
+          message.reply ({content: `remove all aborted.`}) ;
         }
       } catch (err) {
         console.log ("err remove all:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else
   
     if (action === "from") {
       try {
-        // message.reply (`should give item of rarity ${itemRarity} from character ${characterId} to ${user.displayName}.`) ;
+        // message.reply ({content: `should give item of rarity ${itemRarity} from character ${characterId} to ${user.displayName}.`}) ;
         const guild_id = message.guild.id, owner_id = user.id ;
         var [rows, fields] = await client.connection.promise().query ("select rarity as characterRarity, name as characterName from wanshitong.`character` where id=? ;", [characterId]) ;
-        if (! rows.length) return message.reply (`id ${characterId} is not a valid id !`) ;
+        if (! rows.length) return message.reply ({content: `id ${characterId} is not a valid id !`}) ;
         rows.forEach (async (row) => {
           isEvent = (row ['characterRarity'] === 4) ;
           characterName = row ['characterName'] ;
@@ -57,7 +57,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
           [rowsI, fieldsI] = await client.connection.promise().query ("select id as itemId from wanshitong.item where character_id=? ;", [characterId]) ;
         } else 
         {
-          return message.reply (`rarity ${itemRarity} is not valid !`) ;
+          return message.reply ({content: `rarity ${itemRarity} is not valid !`}) ;
         }
         const table = `inventory${(isEvent ? "_event" : "")}` ;
         const response = await client.awaitReply(message, `Are you sure you want to remove items from **${user.displayName}** ? (Y/N)`);
@@ -74,13 +74,13 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
               }) ;
             }
           }) ;
-          message.reply (`remove ${itemRarity === "all" ? "all items" : "item of rarity "+itemRarity} from ${characterName} from ${user.displayName}.`) ;
+          message.reply ({content: `remove ${itemRarity === "all" ? "all items" : "item of rarity "+itemRarity} from ${characterName} from ${user.displayName}.`}) ;
         } else {
-          message.reply (`remove aborted.`) ;
+          message.reply ({content: `remove aborted.`}) ;
         }
       } catch (err) {
         console.log ("err give allItems:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else
   
@@ -91,18 +91,18 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         const role = message.guild.roles.cache.find (r => r.name === roleComplete) ;
         if (["y", "yes"].includes(response.toLowerCase())) {
           user.roles.remove(role).catch(console.error);
-          message.channel.send (`${user.displayName} was stripped from role ${role.name}.`) ;
+          message.channel.send ({content: `${user.displayName} was stripped from role ${role.name}.`}) ;
         } else {
-          message.reply (`remove aborted.`) ;
+          message.reply ({content: `remove aborted.`}) ;
         }
       } catch (err) {
         console.log ("err give allItems:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else
   
     {
-      message.reply (`invalid action \`${action}\`.`) ;
+      message.reply ({content: `invalid action \`${action}\`.`}) ;
     }
   };
   

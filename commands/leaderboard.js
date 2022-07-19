@@ -17,7 +17,7 @@ exports.run = async (client, message, args, level) => {
   // ============================================================= << 61 characters max
   if (body[0].length) {
     characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}${body[0]}`+"```") ;
-    let leaderboard = await message.channel.send(characterEmbed);
+    let leaderboard = await message.channel.send({embeds: [characterEmbed]});
     leaderboard.react('◀')
        .then()
        .catch(console.error);
@@ -26,7 +26,7 @@ exports.run = async (client, message, args, level) => {
        .catch(console.error);
     // Create a reaction collector
     const filter = (reaction, user) => (reaction.emoji.name === '◀' || reaction.emoji.name === '▶') && !user.bot;
-    const collector = leaderboard.createReactionCollector(filter, { time: 60000 });
+    const collector = leaderboard.createReactionCollector({filter, time: 60000 });
     collector.on('collect', async (r) => {
       //console.log(`Collected ${r.emoji.name}`) ; 
       if (r.emoji.name === '◀') {
@@ -60,7 +60,7 @@ exports.run = async (client, message, args, level) => {
     return ;
   }
   characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}`+"```") ;
-  await message.channel.send(characterEmbed);
+  await message.channel.send({embeds: [characterEmbed]});
 };
 
 exports.conf = {

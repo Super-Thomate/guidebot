@@ -1,3 +1,5 @@
+const { Formatters, Util } = require("discord.js");
+
 exports.run = async (client, message, [action, ...args], level) => { // eslint-disable-line no-unused-vars
     /*
      * Find command
@@ -5,7 +7,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
      */
     const settings = message.settings = client.getSettings(message.guild);
     
-    if (! action) return message.reply (`action required !`) ;
+    if (! action) return message.reply ({content: `action required !`}) ;
     action = action.toLowerCase() ;
     
     const allCharacterRarity = ["low", "regular", "high", "event"] ;
@@ -24,11 +26,12 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         rows.forEach (row => {
           result += `* [${client.getRarityCharacter (row.rarity)}] ${row.name}#${row.id}\n` ;
         }) ;
-        var searchResult = `= Search Character Result =\n${result.length ? result : "No result found !"}` ;
-        message.channel.send (searchResult, {code: "asciidoc", split: { char: "\u200b" }})
+        // var searchResult = Util.splitMessage(Formatters.codeBlock("asciidoc", `= Search Character Result =\n${result.length ? result : "No result found !"}`), { char: "\u200b" }) ;
+        var searchResult = Formatters.codeBlock("asciidoc", `= Search Character Result =\n${result.length ? result : "No result found !"}`) ;
+        message.channel.send ({content: searchResult}) ;
       } catch (err) {
         console.log ("err find character:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else
 
@@ -46,16 +49,15 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         rows.forEach (async (row) => {
           result += `* [${client.getRarityItem(row.itemRarity)}] ${row.itemName}#${row.itemId} from ${row.characterName}#${row.characterId}\n` ;       
         }) ;
-        var searchResult = `= Search Item Result =\n${result.length ? result : "No result found !"}` ;
-        message.channel.send (searchResult, {code: "asciidoc", split: { char: "\u200b" }})
+        var searchResult = Formatters.codeBlock("asciidoc", `= Search Item Result =\n${result.length ? result : "No result found !"}`) ;
+        message.channel.send ({content: searchResult})
       } catch (err) {
         console.log ("err find item:", err) ;
-        message.reply ("an error occured !") ;
+        message.reply ({content: "an error occured !"}) ;
       }
     } else
-  
     {
-      message.reply (`invalid action \`${action}\`.`) ;
+      message.reply ({content: `invalid action \`${action}\`.`}) ;
     }
   };
   
