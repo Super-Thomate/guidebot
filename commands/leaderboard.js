@@ -8,7 +8,7 @@ exports.run = async (client, message, args, level) => {
   var characterEmbed = new client.Discord.MessageEmbed()
                              .setColor("#DDA624")
                              .setTitle(`Scoreboard ${message.guild.name}`)
-                             .setFooter (`1/${numPage}`)
+                             .setFooter ({text: `1/${numPage}`})
                              ;
   const descHeader = `  Rank.  | Items | User \n` ;
   var maxLength = descHeader.length ;
@@ -50,8 +50,8 @@ exports.run = async (client, message, args, level) => {
       body = await getBody (client, guild, maxLength, message, currentPage, maxPerPage) ;
       descSeparator = `${"=".repeat(Math.min (body [1], 61))}\n` ;
       characterEmbed.setDescription ("```"+`${descHeader}${descSeparator}${body[0]}`+"```") ;
-      characterEmbed.setFooter (`${currentPage}/${numPage}`) ;
-      leaderboard.edit (characterEmbed) ;
+      characterEmbed.setFooter ({text: `${currentPage}/${numPage}`}) ;
+      leaderboard.edit ({embeds: [characterEmbed]}) ;
     });
     collector.on('end', collected => {
       //console.log(`Collected ${collected.size} items`) ;

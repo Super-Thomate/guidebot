@@ -70,6 +70,9 @@ module.exports = async client => {
   client.connection.execute ("CREATE TABLE IF NOT EXISTS `occurance` (`message` BIGINT NOT NULL default 0, `drop` BIGINT NOT NULL default 0, `guild_id` BIGINT NOT NULL, primary key (`guild_id`)) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
+  client.connection.execute ("CREATE TABLE IF NOT EXISTS `availability` (`character_id` INT NOT NULL, `guild_id` BIGINT NOT NULL, `is_available` SMALLINT NOT NULL DEFAULT 0, primary key (`character_id`, `guild_id`)) ;", (err, res) => {
+    if (err) console.log ("err:",err) ;
+  }) ;
   // Table for debug count each drop
   /*
   client.connection.execute ("CREATE TABLE IF NOT EXISTS `gamecount` (`id` INT NOT NULL, `number` BIGINT NOT NULL default 0, `type` SMALLINT NOT NULL, guild_id` BIGINT NOT NULL, primary key (`id`, `guild_id`)) ;", (err, rows) => {
@@ -77,16 +80,16 @@ module.exports = async client => {
   }) ;
   */
   // ENCODING
-  client.connection.execute ("ALTER TABLE wanshitong.`character` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
+  client.connection.execute ("ALTER TABLE `character` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
-  client.connection.execute ("ALTER TABLE wanshitong.`item` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
+  client.connection.execute ("ALTER TABLE `item` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
-  client.connection.execute ("ALTER TABLE wanshitong.`character` CHANGE name name VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", (err, rows) => {
+  client.connection.execute ("ALTER TABLE `character` CHANGE name name VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
-  client.connection.execute ("ALTER TABLE wanshitong.`item` CHANGE name name VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", (err, rows) => {
+  client.connection.execute ("ALTER TABLE `item` CHANGE name name VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", (err, rows) => {
     if (err) console.log ("err:",err) ;
   }) ;
   // MAX ITEMS / GUILD
