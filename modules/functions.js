@@ -367,7 +367,7 @@ module.exports = (client) => {
         .setTitle (`${row.characterName} repart.`)
         .setDescription (`<@${author.id}> ${row.characterName} t'a offert ${row.itemName}.\n${client.getRarityEmoji(item)} C'est un objet **${client.getRarityItem(item).lowerCaseFirstLetter()}** ${client.getRarityEmoji(item)}. ${already?"\n*Vous lui rendez parce que vous l'avez déjà.*":""}`)
         .setColor (colors[item]) ;
-      msgEmbed.edit (characterEmbed) ;
+      msgEmbed.edit ({embeds: [characterEmbed]}) ;
       collector.stop ("claimed") ;
     });
     
@@ -385,7 +385,7 @@ module.exports = (client) => {
           .setTitle (`${row.characterName} disparaît.`) // est parti·e
           .setDescription (`${(reason === "time")?"Oh non, vous n'avez pas été assez rapide !":"Ce n'était pas la réponse attendue !"}`)
           .setColor (colors.left) ;
-        msgEmbed.edit (characterEmbed) ;
+        msgEmbed.edit ({embeds: [characterEmbed]}) ;
       }
       if ((reason !== "time"))
         msgCollected.delete({timeout:500})

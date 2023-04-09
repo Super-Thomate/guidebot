@@ -13,7 +13,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     var characterEmbed = new client.Discord.MessageEmbed()
                                .setColor("#DDA624")
                                .setTitle(`📜 Inventaire de ${message.member.displayName} 🎉`)
-                               .setFooter (`1/${numPage}`)
+                               .setFooter ({text: `1/${numPage}`})
                                ;
     var currentPage = 1 ;
     var allFields = await getInventoryEvent(client, author, currentPage, guild_id, maxPerPage) ;
@@ -53,8 +53,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         allFields = await getInventoryEvent (client, author, currentPage, guild_id, maxPerPage) ;
         characterEmbed.fields = [] ;
         characterEmbed.addFields (allFields) ;
-        characterEmbed.setFooter (`${currentPage}/${numPage}`) ;
-        inventory.edit (characterEmbed) ;
+        characterEmbed.setFooter ({text: `${currentPage}/${numPage}`}) ;
+        inventory.edit ({embeds: [characterEmbed]}) ;
       });
       collector.on('end', collected => {
         //console.log(`Collected ${collected.size} items`) ;
@@ -83,7 +83,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     var characterEmbed = new client.Discord.MessageEmbed()
                                .setColor("#DDA624")
                                .setTitle(`📜 Inventaire de ${message.member.displayName}`)
-                               .setFooter (`1/${numPage}`)
+                               .setFooter ({text: `1/${numPage}`})
                                ;
     var currentPage = 1 ;
     var allFields = await getInventoryByCharacterSerie(client, author, currentPage, guild_id, action, maxPerPage) ;
@@ -123,8 +123,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         allFields = await getInventoryByCharacterSerie(client, author, currentPage, guild_id, action, maxPerPage) ;
         characterEmbed.fields = [] ;
         characterEmbed.addFields (allFields) ;
-        characterEmbed.setFooter (`${currentPage}/${numPage}`) ;
-        inventory.edit (characterEmbed) ;
+        characterEmbed.setFooter ({text: `${currentPage}/${numPage}`}) ;
+        inventory.edit ({embeds: [characterEmbed]}) ;
       });
       collector.on('end', collected => {
         //console.log(`Collected ${collected.size} items`) ;
@@ -146,7 +146,7 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
     var characterEmbed = new client.Discord.MessageEmbed()
                                .setColor("#DDA624")
                                .setTitle(`📜 Inventaire de ${message.member.displayName}`)
-                               .setFooter (`1/${numPage}`)
+                               .setFooter ({text: `1/${numPage}`})
                                ;
     var currentPage = 1 ;
     var allFields = await getInventory(client, author, currentPage, guild_id, maxPerPage) ;
@@ -186,8 +186,8 @@ exports.run = async (client, message, [action, ...args], level) => { // eslint-d
         allFields = await getInventory(client, author, currentPage, guild_id, maxPerPage) ;
         characterEmbed.fields = [] ;
         characterEmbed.addFields (allFields) ;
-        characterEmbed.setFooter (`${currentPage}/${numPage}`) ;
-        inventory.edit (characterEmbed) ;
+        characterEmbed.setFooter ({text: `${currentPage}/${numPage}`}) ;
+        inventory.edit ({embeds: [characterEmbed]}) ;
       });
       collector.on('end', collected => {
         //console.log(`Collected ${collected.size} items`) ;
